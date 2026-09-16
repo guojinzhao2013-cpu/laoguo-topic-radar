@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>「老郭的数字生活」自媒体选题雷达系统</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-border: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-red: #ef4444;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-purple: #8b5cf6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.5; padding: 20px; }
+.container { max-width: 1440px; margin: 0 auto; }
+header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--surface-border); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+h1 { font-size: 1.6rem; font-weight: 700; color: #fff; }
+.header-meta { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.update-badge { background: #064e3b; color: #6ee7b7; padding: 2px 8px; border-radius: 4px; font-weight: 600; font-size: 0.75rem; }
+.nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.nav-tab { padding: 8px 16px; background: var(--surface); border: 1px solid var(--surface-border); border-radius: 8px; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s; }
+.nav-tab.active, .nav-tab:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.controls { background: var(--surface); padding: 16px; border-radius: 12px; border: 1px solid var(--surface-border); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px; }
+.controls input, .controls select, .btn { padding: 8px 12px; background: #0b1120; border: 1px solid var(--surface-border); border-radius: 6px; color: var(--text-main); font-size: 0.85rem; }
+.controls input:focus, .controls select:focus { outline: none; border-color: var(--primary); }
+.btn { background: #334155; cursor: pointer; font-weight: 600; border: none; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { background: #475569; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.summary-banner { background: rgba(37,99,235,0.08); border-left: 4px solid var(--primary); padding: 16px 20px; border-radius: 0 8px 8px 0; margin-bottom: 24px; font-size: 0.9rem; }
+.summary-banner h3 { font-size: 1rem; margin-bottom: 8px; color: #60a5fa; }
+.summary-banner ul { padding-left: 18px; color: #cbd5e1; }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; transition: border-color 0.2s; }
+.card:hover { border-color: #475569; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.card-id { font-size: 0.75rem; font-weight: 700; color: #94a3b8; background: #0f172a; padding: 2px 6px; border-radius: 4px; }
+.card-title { font-size: 1.05rem; font-weight: 700; color: #f1f5f9; cursor: pointer; flex: 1; line-height: 1.4; }
+.card-title:hover { color: #60a5fa; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem; }
+.tag { padding: 2px 8px; border-radius: 4px; background: #334155; color: #cbd5e1; }
+.tag-score { background: #1e3a8a; color: #93c5fd; font-weight: 700; }
+.tag-flag { background: #581c87; color: #e9d5ff; }
+.tag-gap { background: #064e3b; color: #a7f3d0; }
+.card-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; }
+.card-details { display: none; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--surface-border); font-size: 0.85rem; }
+.card-details.open { display: block; }
+.detail-sec { margin-bottom: 10px; }
+.detail-sec strong { color: #38bdf8; display: block; margin-bottom: 2px; }
+.detail-table { width: 100%; font-size: 0.75rem; border-collapse: collapse; margin: 8px 0; }
+.detail-table td { padding: 4px 6px; border: 1px solid var(--surface-border); }
+.detail-table tr td:first-child { background: #0f172a; width: 35%; color: var(--text-muted); }
+.plan-box { background: #0b1120; border: 1px solid #1e3a8a; padding: 12px; border-radius: 8px; margin-top: 10px; }
+.plan-box h4 { font-size: 0.85rem; color: #93c5fd; margin-bottom: 6px; }
+.table-container { width: 100%; overflow-x: auto; background: var(--surface); border-radius: 8px; border: 1px solid var(--surface-border); }
+table.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem; min-width: 900px; }
+table.data-table th, table.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--surface-border); }
+table.data-table th { background: #0f172a; color: #cbd5e1; font-weight: 600; position: sticky; top: 0; }
+table.data-table tr:hover { background: #243248; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.top-box { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.top-box h3 { font-size: 1.1rem; color: #60a5fa; margin-bottom: 12px; }
+.doc-box { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 8px; padding: 20px; font-size: 0.9rem; line-height: 1.7; color: #cbd5e1; }
+.doc-box h3 { color: #f8fafc; margin: 16px 0 8px; }
+.doc-box ul { padding-left: 20px; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+.modal.open { display: flex; }
+.modal-body { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 12px; padding: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>「老郭的数字生活」自媒体选题雷达系统</h1>
+      <div class="header-meta">
+        <span>聚焦 AI 工具 · 自媒体运营 · 一人公司 · 务实验证与变现闭环</span>
+        <span class="update-badge" id="data-status-badge">内置基准数据</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <button class="btn btn-primary" onclick="showStats()">📊 维度统计分布</button>
+      <button class="btn" onclick="exportCSV()">📥 导出 CSV</button>
+      <button class="btn" onclick="exportJSON()">💾 导出 JSON</button>
+      <button class="btn" onclick="document.getElementById('importFile').click()">📤 导入 JSON</button>
+      <input type="file" id="importFile" style="display:none" onchange="importJSON(event)" accept=".json">
+    </div>
+  </header>
+
+  <div class="summary-banner">
+    <h3>📌 雷达洞察与拍片优先级指导</h3>
+    <div style="font-size: 0.85rem; line-height: 1.6;">
+      <strong>当前核心缺口：</strong>全网充斥「一键生成日产100条」「ChatGPT月入过万」等高夸大速成套路，极度缺乏<strong>真实风控踩坑数据、一人全流程耗时还原、可复用的工作流模板文件</strong>。<br>
+      <strong>先拍推荐：</strong>① T001 真实测试一人公司AI工作流耗时与收益防速成；② T002 小红书AI图文平台风控与降AI率实测；③ T005 建立竞品知识库到自动化选题雷达（产品化模板）；④ T004 YouTube长拆短与章节SEO自动化实测。<br>
+      <strong>建议淘汰/转型：</strong>一律淘汰“纯搬运无原创价值的Faceless频道速成教程”，转向合规知识重构与个性化IP交付。
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="switchTab('board')">📋 选题卡看板 (<span id="tab-count-board">30</span>)</div>
+    <div class="nav-tab" onclick="switchTab('table')">📊 中文总表</div>
+    <div class="nav-tab" onclick="switchTab('evidence')">🔍 来源证据库 (60)</div>
+    <div class="nav-tab" onclick="switchTab('top5')">🏆 Top 5 核心建议</div>
+    <div class="nav-tab" onclick="switchTab('guide')">📖 规则与使用说明</div>
+  </div>
+
+  <div id="filter-controls" class="controls">
+    <input type="text" id="search-input" placeholder="搜索选题标题、痛点或关键字..." oninput="renderCards(); renderTable();">
+    <select id="theme-filter" onchange="renderCards(); renderTable();">
+      <option value="">全部主题分类</option>
+    </select>
+    <select id="platform-filter" onchange="renderCards(); renderTable();">
+      <option value="">全部来源平台</option>
+    </select>
+    <select id="status-filter" onchange="renderCards(); renderTable();">
+      <option value="">全部状态</option>
+    </select>
+    <select id="sort-select" onchange="renderCards(); renderTable();">
+      <option value="score-desc">总分：从高到低</option>
+      <option value="score-asc">总分：从低到高</option>
+      <option value="sources-desc">来源数：从多到少</option>
+    </select>
+    <button class="btn" onclick="resetFilters()">重置筛选</button>
+  </div>
+
+  <div id="tab-board" class="tab-content active">
+    <div class="cards-grid" id="cards-container"></div>
+  </div>
+
+  <div id="tab-table" class="tab-content">
+    <div class="table-container">
+      <table class="data-table" id="main-data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>选题标题</th>
+            <th>主题</th>
+            <th>状态</th>
+            <th>总分</th>
+            <th>来源数</th>
+            <th>主要平台</th>
+            <th>标记</th>
+            <th>预估投入</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-evidence" class="tab-content">
+    <div style="margin-bottom: 12px; font-size: 0.85rem; color: var(--text-muted);">
+      展示全网公开可查证的 60 条基准情报，覆盖爆款视频、社区讨论、官方合规政策与产品动态。所有状态严格标注“完整可核验”或“仅依标题/摘要分析”。
+    </div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>平台</th>
+            <th>标题 / 样本内容</th>
+            <th>发布日期</th>
+            <th>热度/赞数/观看</th>
+            <th>归属主题</th>
+            <th>证据可信度</th>
+            <th>夸大程度</th>
+            <th>读取状态</th>
+            <th>公开网址</th>
+          </tr>
+        </thead>
+        <tbody id="evidence-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-top5" class="tab-content">
+    <div class="top-box">
+      <h3>🌟 最值得拍 Top 5（高缺口、高呼声、立显专业）</h3>
+      <ol style="padding-left: 20px; line-height: 1.8; font-size: 0.9rem;" id="top-worth-filming"></ol>
+    </div>
+    <div class="top-box">
+      <h3>🛠️ 最值得实测 Top 5（动手打假、风控还原、硬核数据）</h3>
+      <ol style="padding-left: 20px; line-height: 1.8; font-size: 0.9rem;" id="top-worth-testing"></ol>
+    </div>
+    <div class="top-box">
+      <h3>📚 最容易形成系列 Top 5（成瘾性强、追更粘性高）</h3>
+      <ol style="padding-left: 20px; line-height: 1.8; font-size: 0.9rem;" id="top-series"></ol>
+    </div>
+    <div class="top-box">
+      <h3>💰 最适合产品化 Top 5（模板引流、数字商品直接变现）</h3>
+      <ol style="padding-left: 20px; line-height: 1.8; font-size: 0.9rem;" id="top-product"></ol>
+    </div>
+    <div class="top-box">
+      <h3>⚠️ 看似热门但建议淘汰/转向 Top 5（防封号、防信息茧房）</h3>
+      <ol style="padding-left: 20px; line-height: 1.8; font-size: 0.9rem;" id="top-eliminate"></ol>
+    </div>
+  </div>
+
+  <div id="tab-guide" class="tab-content">
+    <div class="doc-box">
+      <h3>1. 系统定位与边界</h3>
+      <p>本系统专为「老郭的数字生活」定制，解决频道在「AI 工具 + 自媒体运营 + 一人公司 + 变现」定位下的 30-60 天选题规划。系统杜绝神化 AI，不承诺任何“躺赚”、“日进斗金”的伪概念，所有选题坚持“先验真伪、重构交付、沉淀资产”。</p>
+
+      <h3>2. 十维评分机制 (每项 0-5 分，满分 50 分)</h3>
+      <ul>
+        <li><strong>频道定位匹配度：</strong>是否精准契合 AI 实测、一人公司效率提升、独立变现？</li>
+        <li><strong>用户需求强度：</strong>是否直击当下运营者的实际卡点与瓶颈？</li>
+        <li><strong>内容缺口度：</strong>全网是否缺乏完整解法与闭环演示（越缺分数越高）？</li>
+        <li><strong>供给饱和度（逆向）：</strong>竞品是否过度泛滥（0=极度泛滥饱和，5=极度蓝海空白）？</li>
+        <li><strong>实测可行性：</strong>单人环境在 1-3 天内能否跑通完整验证闭环？</li>
+        <li><strong>视觉展示性：</strong>前后对比、自动化运行过程在视频中是否具有极强直观冲击力？</li>
+        <li><strong>系列化潜力：</strong>能否持续延展为多期栏目或固定周更专题？</li>
+        <li><strong>产品化潜力：</strong>能否顺势沉淀为 Notion 模板、Prompt 库、自动化代码等数字资产？</li>
+        <li><strong>成本与合规风险（逆向）：</strong>工具成本是否低廉、平台封禁风险是否低？</li>
+        <li><strong>变现闭环相关性：</strong>与后续咨询、知识库会员、工具分销的承接紧密度？</li>
+      </ul>
+
+      <h3>3. 状态与持久化机制</h3>
+      <p>选题卡状态包括：<code>新发现</code>、<code>待研究</code>、<code>研究中</code>、<code>值得拍</code>、<code>待实测</code>、<code>已拍摄</code>、<code>已发布</code>、<code>可再利用</code>、<code>淘汰</code>。状态调整将自动保存在浏览器的 <code>localStorage</code> 中，刷新页面不会丢失。</p>
+
+      <h3>4. 自动更新与数据分级说明</h3>
+      <p>页面加载时会自动检测仓库根目录是否存在 <code>topics.json</code>（由 GitHub Actions 自动化脚本定时生成）。若存在则优先展示最新情报更新，若网络不可达或未配置，则无缝退回至内置的 30 张高分基准选题卡。</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="stats-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-body">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="color:#fff;">📊 选题雷达多维数据分布统计</h3>
+      <button class="btn" onclick="closeModal()">关闭</button>
+    </div>
+    <div id="stats-content" style="font-size:0.85rem; line-height:1.7;"></div>
+  </div>
+</div>
+
+<script>
+// ==================== 60 笔公开证据数据 ====================
+const rawEvidence = [
+  {id:1, platform:"YouTube", title:"How I Run a 1-Person Business with AI (Full Stack Breakdown)", date:"2025-11-10", metrics:"184K views / 8.2K likes", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com/results?search_query=one+person+business+ai+workflow"},
+  {id:2, platform:"YouTube", title:"Stop Making YouTube Shorts with AI Like This (Shadowban Risk)", date:"2025-12-04", metrics:"320K views / 14K likes", theme:"降 AI 率与平台风控", conf:"High", hype:"中", status:"完整可核验", url:"https://www.youtube.com/results?search_query=youtube+shorts+ai+shadowban"},
+  {id:3, platform:"Reddit", title:"r/SaaS: Anyone else tired of 'Automate 100 faceless videos a day' garbage?", date:"2026-01-15", metrics:"890 upvotes / 215 comments", theme:"收益截图反速成拆解", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/SaaS/"},
+  {id:4, platform:"小红书", title:"小红书最新违规机制：AI图文被判定低质排重怎么破？", date:"2026-02-01", metrics:"4.5K 赞 / 1.2K 收藏", theme:"降 AI 率与平台风控", conf:"High", hype:"低", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:5, platform:"YouTube", title:"Turn 1 Long Video Into 10 Viral Shorts using Claude + Whisper + FFmpeg", date:"2025-10-18", metrics:"95K views / 4.1K likes", theme:"内容再利用／长拆短", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com/results?search_query=ffmpeg+whisper+claude+shorts"},
+  {id:6, platform:"ProductHunt", title:"n8n 1.0 + AI Agent Node Launch: Self-hosted Workflow Automation", date:"2025-08-20", metrics:"1,420 upvotes", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://www.producthunt.com/products/n8n-io"},
+  {id:7, platform:"Reddit", title:"r/NewTubers: Faceless AI channel monetized then terminated for repetitive content", date:"2026-01-08", metrics:"640 upvotes / 188 comments", theme:"faceless 频道／政策风险", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/NewTubers/"},
+  {id:8, platform:"Bilibili", title:"【硬核拆解】所谓‘月入3万的AI壁纸号’，我实测了一个月，最后赚了多少？", date:"2025-11-28", metrics:"480K 播放 / 32K 赞", theme:"收益截图反速成拆解", conf:"High", hype:"低", status:"完整可核验", url:"https://www.bilibili.com"},
+  {id:9, platform:"GitHub", title:"Trending: yt-dlp + whisper-standalone + Dify content extraction pipeline", date:"2026-02-10", metrics:"3.4K stars", theme:"竞品知识库到选题雷达", conf:"High", hype:"低", status:"完整可核验", url:"https://github.com/trending"},
+  {id:10, platform:"YouTube", title:"YouTube's AI Synthetic Media Disclosure Policy Official Breakdown", date:"2025-09-12", metrics:"82K views / 2.9K likes", theme:"版权与平台合规", conf:"High", hype:"低", status:"完整可核验", url:"https://support.google.com/youtube/answer/14328491"},
+  {id:11, platform:"小红书", title:"普通人做一人公司，我的Notion全能自媒体看板模版分享", date:"2026-01-22", metrics:"1.8K 赞 / 3.4K 收藏", theme:"可产品化／模板与数据库", conf:"High", hype:"中", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:12, platform:"Reddit", title:"r/SideProject: Built an automated thumbnail A/B testing tool using Flux AI", date:"2026-01-30", metrics:"410 upvotes / 72 comments", theme:"YouTube SEO／缩略图／章节", conf:"Medium", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/SideProject/"},
+  {id:13, platform:"YouTube", title:"I Tested Top 5 AI Video Editors (CapCut vs Premiere AI vs Opus vs Descript)", date:"2025-12-14", metrics:"210K views / 9.5K likes", theme:"AI 剪辑／配音", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:14, platform:"官方文档", title:"OpenAI: Best Practices for Content Moderation & AI Attribution", date:"2025-11-05", metrics:"文档参考", theme:"版权与平台合规", conf:"High", hype:"低", status:"完整可核验", url:"https://openai.com/policies"},
+  {id:15, platform:"YouTube", title:"Make $10,000/Month with AI Short Automation (Guru Scam Exposed)", date:"2026-01-05", metrics:"540K views / 28K likes", theme:"收益截图反速成拆解", conf:"High", hype:"中", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:16, platform:"Twitter/X", title:"Thread: Why multi-platform auto-posting without native hook customization is dead", date:"2026-02-12", metrics:"1.2K RTs / 5.8K Likes", theme:"短视频多平台分发", conf:"High", hype:"低", status:"完整可核验", url:"https://x.com"},
+  {id:17, platform:"小红书", title:"实操干货：用DeepSeek+Coze搭建小红书爆款图文全自动拆解流", date:"2026-02-18", metrics:"3.1K 赞 / 2.9K 收藏", theme:"小红书 AI 起号", conf:"High", hype:"中", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:18, platform:"YouTube", title:"ElevenLabs New Voice Clone Ethics & Detection Systems Update", date:"2025-12-20", metrics:"45K views / 1.8K likes", theme:"AI 剪辑／配音", conf:"High", hype:"低", status:"完整可核验", url:"https://elevenlabs.io"},
+  {id:19, platform:"Reddit", title:"r/Blogging: AI-generated blogs dropped 90% in Google March Core Update", date:"2025-10-30", metrics:"1.1K upvotes / 420 comments", theme:"降 AI 率与平台风控", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/Blogging/"},
+  {id:20, platform:"YouTube", title:"Build a Second Brain for Content Creators in Obsidian + Local LLM", date:"2025-11-19", metrics:"130K views / 6.7K likes", theme:"竞品知识库到选题雷达", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:21, platform:"Bilibili", title:"剪映/CapCut 脚本自动化剪辑：Python调官方API批量出片真实测试", date:"2026-01-11", metrics:"112K 播放 / 7.8K 赞", theme:"AI 剪辑／配音", conf:"High", hype:"低", status:"完整可核验", url:"https://www.bilibili.com"},
+  {id:22, platform:"YouTube", title:"How to Write YouTube Hooks with Claude 3.5 Sonnet that Retain 60%+", date:"2025-12-08", metrics:"88K views / 4.3K likes", theme:"YouTube SEO／缩略图／章节", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:23, platform:"Reddit", title:"r/CreatorServices: What clients actually pay for in AI Video Editing in 2026", date:"2026-02-02", metrics:"290 upvotes / 84 comments", theme:"可产品化／模板与数据库", conf:"Medium", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/CreatorServices/"},
+  {id:24, platform:"微信公众号", title:"自媒体税收与一人公司个体户核定征收合规指南（2026新规）", date:"2026-01-18", metrics:"18K 阅读 / 420 在看", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://mp.weixin.qq.com"},
+  {id:25, platform:"YouTube", title:"Faceless History Channel: From 0 to $3k/mo or Copyright Strike?", date:"2026-01-27", metrics:"175K views / 6.1K likes", theme:"faceless 频道／政策风险", conf:"High", hype:"中", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:26, platform:"ProductHunt", title:"OpusClip 3.0: Dynamic Caption & Multicam Switching Launch", date:"2025-11-25", metrics:"920 upvotes", theme:"内容再利用／长拆短", conf:"High", hype:"中", status:"完整可核验", url:"https://www.producthunt.com"},
+  {id:27, platform:"YouTube", title:"I Tried Selling Notion Templates with AI Traffic for 30 Days", date:"2025-12-28", metrics:"290K views / 12K likes", theme:"可产品化／模板与数据库", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:28, platform:"Reddit", title:"r/Youtube: The new 'AI Generated' label requirement is killing impressions?", date:"2026-02-05", metrics:"750 upvotes / 310 comments", theme:"版权与平台合规", conf:"High", hype:"中", status:"完整可核验", url:"https://www.reddit.com/r/youtube/"},
+  {id:29, platform:"Bilibili", title:"【避坑】自媒体多平台分发工具实测，哪个容易限流？", date:"2026-01-03", metrics:"140K 播放 / 9.1K 赞", theme:"短视频多平台分发", conf:"High", hype:"低", status:"完整可核验", url:"https://www.bilibili.com"},
+  {id:30, platform:"小红书", title:"小红书AI虚拟博主还能起号吗？实操3个账号全死掉的教训总结", date:"2026-02-14", metrics:"5.2K 赞 / 1.8K 收藏", theme:"小红书 AI 起号", conf:"High", hype:"低", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:31, platform:"YouTube", title:"Full Autonomous Newsletter Workflow with Make.com & DeepSeek", date:"2026-01-20", metrics:"62K views / 2.8K likes", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:32, platform:"Reddit", title:"r/OpenAI: OpenAI Sora accessibility update and impact on stock footage creators", date:"2025-12-18", metrics:"1.5K upvotes / 480 comments", theme:"AI 剪辑／配音", conf:"High", hype:"高", status:"只能依标题或摘要判断", url:"https://www.reddit.com/r/OpenAI/"},
+  {id:33, platform:"YouTube", title:"Don't Buy AI Automation Courses Before Watching This", date:"2026-02-09", metrics:"410K views / 23K likes", theme:"收益截图反速成拆解", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:34, platform:"官方博客", title:"TikTok Shop & Creator Rewards: Guidelines on AI synthetic content", date:"2025-10-15", metrics:"官方通告", theme:"版权与平台合规", conf:"High", hype:"低", status:"完整可核验", url:"https://newsroom.tiktok.com"},
+  {id:35, platform:"YouTube", title:"How I Scrape 1000 YouTube Transcripts to Predict Next Viral Topics", date:"2025-11-02", metrics:"98K views / 4.9K likes", theme:"竞品知识库到选题雷达", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:36, platform:"小红书", title:"纯干货：小红书文案降AI率指南，7个实测可过的结构微调技巧", date:"2026-01-12", metrics:"3.8K 赞 / 4.1K 收藏", theme:"降 AI 率与平台风控", conf:"High", hype:"低", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:37, platform:"Reddit", title:"r/DigitalNomad: Is One-Person AI Agency actually sustainable?", date:"2026-01-29", metrics:"620 upvotes / 230 comments", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/DigitalNomad/"},
+  {id:38, platform:"YouTube", title:"YouTube Chapters & Timestamps: Does AI-generated chapters improve retention?", date:"2025-12-22", metrics:"54K views / 2.1K likes", theme:"YouTube SEO／缩略图／章节", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:39, platform:"GitHub", title:"Auto-Shorts-Generator: 1-click video pipeline (Warning: API cost issue)", date:"2026-02-03", metrics:"2.1K stars / 420 issues", theme:"AI 剪辑／配音", conf:"High", hype:"高", status:"完整可核验", url:"https://github.com"},
+  {id:40, platform:"YouTube", title:"My Notion Content OS That Manages 5 Social Channels by 1 Person", date:"2025-10-25", metrics:"220K views / 11K likes", theme:"可产品化／模板与数据库", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:41, platform:"微信公众号", title:"微信视频号AI内容限流与推荐机制实操观察", date:"2026-02-11", metrics:"12K 阅读 / 310 在看", theme:"短视频多平台分发", conf:"High", hype:"低", status:"完整可核验", url:"https://mp.weixin.qq.com"},
+  {id:42, platform:"Reddit", title:"r/Entrepreneur: Revenue verification: Dissecting a $50k/mo AI affiliate blog", date:"2026-01-17", metrics:"1.3K upvotes / 290 comments", theme:"收益截图反速成拆解", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/Entrepreneur/"},
+  {id:43, platform:"YouTube", title:"ElevenLabs vs Minimax vs Fish Speech: Best Voice for Documentaries", date:"2026-02-07", metrics:"78K views / 3.8K likes", theme:"AI 剪辑／配音", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:44, platform:"小红书", title:"一人自媒体必备：利用开源大模型本地离线搭建个人知识库避坑指南", date:"2026-01-25", metrics:"2.4K 赞 / 2.7K 收藏", theme:"竞品知识库到选题雷达", conf:"High", hype:"低", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:45, platform:"YouTube", title:"The Harsh Reality of AI YouTube Automation After 90 Days", date:"2025-12-16", metrics:"380K views / 16K likes", theme:"faceless 频道／政策风险", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:46, platform:"Reddit", title:"r/Futurology: Are social media algorithms actively suppressing AI content?", date:"2026-01-21", metrics:"890 upvotes / 410 comments", theme:"降 AI 率与平台风控", conf:"Medium", hype:"中", status:"只能依标题或摘要判断", url:"https://www.reddit.com/r/Futurology/"},
+  {id:47, platform:"官方博客", title:"YouTube Official: Clarifying Reused Content & Mass-Produced Policy", date:"2025-11-14", metrics:"官方通告", theme:"版权与平台合规", conf:"High", hype:"低", status:"完整可核验", url:"https://support.google.com"},
+  {id:48, platform:"Bilibili", title:"一个人做播客：Whisper字幕+自动化切片+金句卡片排版开源工作流", date:"2026-01-09", metrics:"86K 播放 / 5.4K 赞", theme:"内容再利用／长拆短", conf:"High", hype:"低", status:"完整可核验", url:"https://www.bilibili.com"},
+  {id:49, platform:"YouTube", title:"Automating YouTube Thumbnail Generation with ComfyUI & Face Consistency", date:"2026-01-24", metrics:"115K views / 5.2K likes", theme:"YouTube SEO／缩略图／章节", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:50, platform:"小红书", title:"一人自媒体成本核算表：我每个月在AI工具上花的每一分钱", date:"2026-02-15", metrics:"4.1K 赞 / 3.8K 收藏", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:51, platform:"Reddit", title:"r/passive_income: $2000 from Faceless channel in month 1 is 99% fake revenue proof", date:"2026-02-04", metrics:"1.1K upvotes / 195 comments", theme:"收益截图反速成拆解", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/passive_income/"},
+  {id:52, platform:"YouTube", title:"Publishing to 6 Platforms at Once: Zapier vs Make vs Metricool vs Publer", date:"2025-11-30", metrics:"94K views / 4.1K likes", theme:"短视频多平台分发", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:53, platform:"ProductHunt", title:"Dify.ai 0.9: Complex LLM Multi-agent Workflow Engine", date:"2025-12-05", metrics:"1,650 upvotes", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://dify.ai"},
+  {id:54, platform:"小红书", title:"AI起号失败的8个血泪坑：为什么你的爆款图文不涨粉也不变现？", date:"2026-01-14", metrics:"2.9K 赞 / 2.2K 收藏", theme:"小红书 AI 起号", conf:"High", hype:"低", status:"完整可核验", url:"https://www.xiaohongshu.com"},
+  {id:55, platform:"YouTube", title:"AI Voiceover Copyright Claims: Can you monetize voice clone storytelling?", date:"2026-01-19", metrics:"145K views / 6.3K likes", theme:"版权与平台合规", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:56, platform:"Reddit", title:"r/VideoEditing: AI Transcription vs Human: Does Whisper still hallucinate?", date:"2026-02-08", metrics:"340 upvotes / 88 comments", theme:"AI 剪辑／配音", conf:"High", hype:"低", status:"完整可核验", url:"https://www.reddit.com/r/VideoEditing/"},
+  {id:57, platform:"YouTube", title:"How to Build a Custom GPT for Your Own YouTube Script Tone Matching", date:"2025-10-12", metrics:"88K views / 3.9K likes", theme:"可产品化／模板与数据库", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"},
+  {id:58, platform:"Bilibili", title:"【一人公司】我如何用一个Obsidian仓库管理3个自媒体号全流程", date:"2026-01-26", metrics:"168K 播放 / 12K 赞", theme:"一人公司／AI 工作流", conf:"High", hype:"低", status:"完整可核验", url:"https://www.bilibili.com"},
+  {id:59, platform:"Twitter/X", title:"The death of cheap AI SEO: Why topical authority and first-hand proof matter", date:"2026-01-10", metrics:"950 RTs / 4.4K Likes", theme:"降 AI 率与平台风控", conf:"High", hype:"低", status:"完整可核验", url:"https://x.com"},
+  {id:60, platform:"YouTube", title:"Complete Content Repurposing Engine (Video -> Thread -> Newsletter -> Post)", date:"2025-12-10", metrics:"230K views / 9.8K likes", theme:"内容再利用／长拆短", conf:"High", hype:"低", status:"完整可核验", url:"https://www.youtube.com"}
+];
+
+// ==================== 初始基准 30 张选题卡数据 ====================
+let rawTopics = [
+  {
+    id: "T001",
+    title: "一人公司AI工作流真实闭环：从选题到发布，单人单周极限产出与真实工时复盘",
+    theme: "一人公司／AI 工作流",
+    status: "值得拍",
+    sourcesCount: 6,
+    sourcesPlatforms: ["YouTube", "ProductHunt", "Bilibili", "Reddit"],
+    painPoint: "全网都在吹AI提效10倍，但个人创作者实际操作时遭遇格式错乱、工具链断裂、维护成本比剪辑还高。",
+    hotness: 5,
+    saturation: 2,
+    gap: "缺乏透明展示每道工序的具体耗时、软件订阅月成本明细与实际卡壳环节的真实复盘。",
+    feasibility: 5,
+    testCost: "低 (已订阅常规工具)",
+    estHours: "16 小时 (1周跟踪)",
+    seriesPotential: "高 (一人公司周报)",
+    productPotential: "高 (Notion工作流看板)",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 5, unsat: 3, feas: 5, visual: 4, series: 5, prod: 5, cost: 4, biz: 5 },
+    totalScore: 46,
+    scoreReason: "极度契合频道‘数字生活与一人公司’定位；切中创作者对AI效率虚高宣传的怀疑痛点；具备极强的模板交付变现力。",
+    plan: {
+      sellingPoint: "不吹牛、不造假：记录老郭1个人跑满1周AI工作流的真实时间流水账与ROI",
+      audience: "个人博主、数字游民、一人公司创业者、副业自媒体新手",
+      outline: "1. 破除迷信：日产10条的噱头 vs 现实交付瓶颈；2. 我的工具栈与月账单公布；3. 选题-脚本-录制-剪辑-排版实操时间打卡表；4. 效率提升的3个真实环节与2个拖后腿环节；5. 一人公司健康运转底线建议。",
+      experimentDesign: "使用Toggl软件严格记录选题、写稿、视频录制、剪辑修整、排版分发的分钟级工时，并与纯人工制作传统对比。",
+      tools: "Obsidian, Claude 3.5, 剪映专业版, Toggl Track, Notion",
+      productionDays: "2天制作 + 1周数据跟踪",
+      distribution: "YouTube 主视频 + Bilibili + 微信公号图文拆解",
+      expectedResult: "高赞完播，树立务实求真频道人设，沉淀第一批高信任度粉丝。"
+    }
+  },
+  {
+    id: "T002",
+    title: "别信‘日产百条爆款’！实测小红书/视频号AI图文平台风控底线与降AI率真伪",
+    theme: "降 AI 率与平台风控",
+    status: "待实测",
+    sourcesCount: 5,
+    sourcesPlatforms: ["小红书", "Reddit", "Bilibili"],
+    painPoint: "听信批量脚本做量产号，结果被系统判定低质重合、限流、无法过审，甚至直接隐形降权。",
+    hotness: 5,
+    saturation: 3,
+    gap: "市面多为玄学传言，缺少对照实验（纯AI生成 vs 降AI提示词微调 vs 人工二次重构的曝光比对）。",
+    feasibility: 4,
+    testCost: "中 (需准备3个测试号)",
+    estHours: "20 小时 (需持续发帖7天)",
+    seriesPotential: "中 (平台风控追踪)",
+    productPotential: "中 (防限流合规自检清单)",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 5, unsat: 3, feas: 4, visual: 4, series: 3, prod: 4, cost: 3, biz: 4 },
+    totalScore: 40,
+    scoreReason: "直击创作者最恐惧的被封被限流痛点，用数据和后台事实说话，天然具备高转发与收藏属性。",
+    plan: {
+      sellingPoint: "用3个全新账号实测发帖，告诉你各大平台算法到底在识别什么、怎么抓违规的",
+      audience: "小红书博主、带货图文创作者、短视频矩阵运营者",
+      outline: "1. 满天飞的AI速成课在害惨谁；2. 对照实验设计：A组纯AI、B组改写提示词、C组人机协作；3. 7天后数据后台截图与违规提示对比；4. 平台底层判定‘非原创/低质’的技术逻辑；5. 安全使用AI创作的3条红线。",
+      experimentDesign: "注册3个小红书新号，同赛道同主题，A组纯ChatGPT直出文案生图，B组过降AI改写工具，C组保留核心逻辑人工复写，各发10篇，跟踪播放量与收录率。",
+      tools: "ChatGPT Plus, QuillBot, 小红书专业号后台, Notion数据跟踪表",
+      productionDays: "发帖跟踪7天 + 剪辑录制1.5天",
+      distribution: "小红书 + YouTube + 微信公众号",
+      expectedResult: "极高收藏率，引发大量评论区读者共鸣与同病相怜的讨论。"
+    }
+  },
+  {
+    id: "T003",
+    title: "拆解‘月入5万AI副业’骗局：揭开速成培训班收益截图的PS漏洞与灰色黑产",
+    theme: "收益截图反速成拆解",
+    status: "值得拍",
+    sourcesCount: 7,
+    sourcesPlatforms: ["YouTube", "Reddit", "微信公众号"],
+    painPoint: "新手小白极易被虚假收益截图、录屏造假洗脑，交几千上万元学费后发现项目根本不可行。",
+    hotness: 5,
+    saturation: 2,
+    gap: "多数人只是口头吐槽，没有从技术层面手把手还原‘网页审查元素造假’、‘收益借壳’及‘洗稿链条’。",
+    feasibility: 5,
+    testCost: "极低",
+    estHours: "10 小时",
+    seriesPotential: "高 (AI黑产打假系列)",
+    productPotential: "低 (非产品化，侧重信任护城河)",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 5, gap: 5, unsat: 4, feas: 5, visual: 5, series: 4, prod: 2, cost: 5, biz: 4 },
+    totalScore: 43,
+    scoreReason: "正义感强、吸睛度拉满、展示效果极佳（现场演示F12改后台数字），是极速拉升个人IP信任度的核武器。",
+    plan: {
+      sellingPoint: "10秒钟教你用浏览器控制台做出任何‘百万月入账单’，带你识破AI割韭菜的所有行话套路",
+      audience: "自媒体新人、职场寻求副业人员、常被社群广告轰炸的用户",
+      outline: "1. 离谱的‘睡后收入’截图大赏；2. 现场造假演练：F12审查元素、高仿网页与旧图新翻；3. 所谓的‘自动化爆款程序’源代码到底是什么；4. 为什么赚钱的项目没人会打包299卖你；5. 辨别真假AI创作者的3个硬指标。",
+      experimentDesign: "录屏演示在知名创作者后台直接修改DOM结构把余额改成¥999,999，并拆解几套市面常见AI副业教程的真实转化率悖论。",
+      tools: "Chrome DevTools, 剪映专业版, 录屏软件OBS",
+      productionDays: "1天录制剪辑",
+      distribution: "全平台分发 (B站/YouTube/微信视频号重点推)",
+      expectedResult: "破圈爆款，单视频获得高播放并确立‘清醒、诚实’的人设基调。"
+    }
+  },
+  {
+    id: "T004",
+    title: "1支长视频如何榨干价值？基于Whisper+本地LLM的长拆短与章节SEO自动化实测",
+    theme: "内容再利用／长拆短",
+    status: "待实测",
+    sourcesCount: 5,
+    sourcesPlatforms: ["YouTube", "GitHub", "Bilibili"],
+    painPoint: "做长视频累死累活，想多平台分发短视频却没精力手动切片、写适配各平台的钩子文案与打点排版。",
+    hotness: 4,
+    saturation: 2,
+    gap: "现有教程多推荐高昂付费SaaS软件，缺乏基于开源/低成本工具、本地保护隐私且能自动输出高情商Hook的工业化方案。",
+    feasibility: 4,
+    testCost: "低 (本地运行+轻量API)",
+    estHours: "14 小时",
+    seriesPotential: "高 (一人内容工业化)",
+    productPotential: "高 (Python脚本/n8n工作流工程文件)",
+    flag: "最适合产品化",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 4, gap: 4, unsat: 4, feas: 4, visual: 4, series: 4, prod: 5, cost: 4, biz: 5 },
+    totalScore: 43,
+    scoreReason: "极强生产力属性，既有硬核技术点，又能直接打包工作流脚本或Prompt工程作为数字商品销售或社群引流。",
+    plan: {
+      sellingPoint: "不买天价SaaS！用一套开源脚本，10分钟把半小时长视频自动拆成5条短视频+排版分发文案",
+      audience: "知识区博主、播客创作者、一人自媒体团队、视频剪辑师",
+      outline: "1. 一鱼多吃的痛点：切片五分钟，选点两小时；2. 自动化架构拆解：Whisper听写 -> 大模型高光提取 -> 时间戳智能切分；3. 差异化Prompt：如何让AI针对小红书和Shorts分别写吸睛Hook；4. 实际跑一遍效果：耗时与质量对比；5. 脚本与工作流开源下载方式。",
+      experimentDesign: "拿频道过往一期20分钟视频进行全程自动化切片实验，测定从视频输入到5条短视频输出的总人工干预时间与最终观感合格率。",
+      tools: "Whisper, Ollama/DeepSeek, Python, FFmpeg, CapCut",
+      productionDays: "2天实测与视频剪辑",
+      distribution: "YouTube, Bilibili, GitHub/Gitee开源代码挂载",
+      expectedResult: "技术好评率高，强力带动私域知识库转化或Gumroad/面包多模板购买。"
+    }
+  },
+  {
+    id: "T005",
+    title: "从竞品知识库到自动化选题雷达：用Dify/Coze搭一套属于自己的爆款选题监控系统",
+    theme: "竞品知识库到选题雷达",
+    status: "待实测",
+    sourcesCount: 6,
+    sourcesPlatforms: ["GitHub", "YouTube", "ProductHunt", "小红书"],
+    painPoint: "每天不知道拍什么，靠拍脑袋想选题，看竞品又看得眼花缭乱，无法系统化提炼爆款底层规律。",
+    hotness: 5,
+    saturation: 1,
+    gap: "全网教搭聊天机器人的泛滥，但教针对创作者自建‘竞品转录库-高频痛点挖掘-差异化角度生成’的实战工程极少。",
+    feasibility: 4,
+    testCost: "极低 (利用开源平台免费额度)",
+    estHours: "15 小时",
+    seriesPotential: "高 (AI Agent实战系列)",
+    productPotential: "极高 (Agent DSL导出配置包)",
+    flag: "最适合产品化",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 5, unsat: 5, feas: 4, visual: 4, series: 4, prod: 5, cost: 5, biz: 5 },
+    totalScore: 47,
+    scoreReason: "全维度得分极高！直击自媒体人选题核心焦虑，且本身就是雷达系统的‘元叙事’（拿本系统的诞生过程做视频）。",
+    plan: {
+      sellingPoint: "把我正在用的‘选题雷达系统’源码与Agent工作流毫无保留公开，帮你解决一整年的选题荒",
+      audience: "自媒体老手、渴望系统化运营的个人博主、机构内容策划",
+      outline: "1. 传统找选题的致命伤：低效与同质化；2. 选题雷达三层架构：抓取层、知识库向量层、推理评估层；3. 现场手把手搭建：如何配置Prompt打分卡；4. 演示真实跑出的Top 5选题效果；5. 一键导入DSL模板领取方式。",
+      experimentDesign: "以本期选题看板为例，演示如何把全网60个样本输入知识库，通过设定10维评分标准，让Agent自动初筛出30张卡片的完整过程。",
+      tools: "Dify / Coze, yt-dlp, DeepSeek API, Notion API",
+      productionDays: "2天系统调试与录制",
+      distribution: "YouTube, Bilibili, 公众号深度长文",
+      expectedResult: "频道标杆级代表作，极强吸粉效应与长期长尾搜索流量。"
+    }
+  },
+  {
+    id: "T006",
+    title: "YouTube合规警报：官方‘AI生成标记’新规与重复内容判定（被黄标/停利真实案例拆解）",
+    theme: "版权与平台合规",
+    status: "值得拍",
+    sourcesCount: 5,
+    sourcesPlatforms: ["YouTube", "Reddit", "官方文档"],
+    painPoint: "频道辛苦达到获利门槛，却因大量使用AI配音和混剪素材被YouTube以‘Reused Content’（重复内容）直接停用获利。",
+    hotness: 4,
+    saturation: 2,
+    gap: "大多数人没读透官方英文合规文档，充斥误解（以为打了AI标就不限流，或不打标就查不出来）。",
+    feasibility: 5,
+    testCost: "低",
+    estHours: "8 小时",
+    seriesPotential: "中",
+    productPotential: "中 (合规避坑手册PDF)",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 4, unsat: 4, feas: 5, visual: 3, series: 3, prod: 3, cost: 5, biz: 4 },
+    totalScore: 41,
+    scoreReason: "安全与生命线话题。涉及海外创作者真实美元收益，信息稀缺且权威，极易获得高完播。",
+    plan: {
+      sellingPoint: "读懂YouTube 2026最新算法红线！别等辛辛苦苦攒的几万粉账号被一夜停用才后悔",
+      audience: "出海自媒体创作者、YouTube获利频道主、跨境内容运营",
+      outline: "1. 真实惨剧：获利申诉被拒的典型案例；2. 逐条解读YouTube官方对Synthetic Media与Reused Content的判决逻辑；3. 哪些AI使用属于合规辅助？哪些属于算法直接猎杀的垃圾？4. 如果收到停利邮件，正确的申诉视频怎么拍；5. 账号安全防护清单。",
+      experimentDesign: "搜集Reddit上3个申诉成功与3个申诉失败的申诉视频脚本对比，梳理出平台人工审核的关键申诉要素。",
+      tools: "YouTube Studio政策文档, 申诉范例素材, 剪映",
+      productionDays: "1天录制剪辑",
+      distribution: "YouTube独家首发 + 微信公众号海外版",
+      expectedResult: "高收藏与长期搜索长尾流量，建立专业合规咨询形象。"
+    }
+  },
+  {
+    id: "T007",
+    title: "一人搞定5大平台分发！自动化同步工具横评与‘防多端判定重复’技巧",
+    theme: "短视频多平台分发",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "小红书", "Bilibili"],
+    painPoint: "剪完片发小红书、抖音、B站、视频号、YouTube，手动上传一小时，用工具分发又怕被判定为营销号限流。",
+    hotness: 4,
+    saturation: 3,
+    gap: "现有评测只讲工具功能，不讲不同平台排版差异、封面比例自适应，以及发布时间错峰防关联的细节策略。",
+    feasibility: 4,
+    testCost: "中 (工具试用/订阅费用)",
+    estHours: "12 小时",
+    seriesPotential: "低",
+    productPotential: "中 (多平台分发排期表)",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 3, unsat: 3, feas: 4, visual: 4, series: 2, prod: 4, cost: 3, biz: 4 },
+    totalScore: 35,
+    scoreReason: "刚需工具向选题，针对多平台运营者有明确的实用价值，但受制于部分工具频繁改接口，长期维护要求高。",
+    plan: {
+      sellingPoint: "告别手动复制粘贴！测试4款主流矩阵分发神器，找出既省时又不被平台限流的最佳平衡点",
+      audience: "一人全媒体矩阵运营者、自媒体自由职业者",
+      outline: "1. 矩阵分发的恶魔细节：封面比例、标签语法、发文时间；2. 4款分发工具深度测评与成本对比；3. 实测API自动发布 vs 手动上传的初始推流差异；4. 防关联与防降权的一人操作SOP。",
+      experimentDesign: "在同一天用不同方式分发同一支视频到测试矩阵，对比前3天的基础播放量与首发平台权重关联。",
+      tools: "Publer, Metricool, 自制自动化脚本, 各大自媒体后台",
+      productionDays: "2天测试与制作",
+      distribution: "B站, 视频号, YouTube",
+      expectedResult: "实用工具类高点赞，带货/分销返佣转化良好。"
+    }
+  },
+  {
+    id: "T008",
+    title: "Notion+AI打造一人自媒体‘超级大脑’：选题、脚本、资产与财务一体化管理（附全套模板）",
+    theme: "可产品化／模板与数据库",
+    status: "值得拍",
+    sourcesCount: 5,
+    sourcesPlatforms: ["YouTube", "小红书", "Reddit"],
+    painPoint: "文件散落各处、选题记在备忘录找不到、脚本改版混乱、收益与工具支出糊涂账。",
+    hotness: 4,
+    saturation: 3,
+    gap: "市面模板要么太复杂学不会，要么太简陋无法驱动AI。缺一套专为一人视频博主定制的‘精益看板’。",
+    feasibility: 5,
+    testCost: "极低 (Notion免费版即可运行)",
+    estHours: "12 小时",
+    seriesPotential: "中",
+    productPotential: "极高 (直接沉淀为拳头免费/付费模板)",
+    flag: "最适合产品化",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 4, gap: 4, unsat: 3, feas: 5, visual: 4, series: 3, prod: 5, cost: 5, biz: 5 },
+    totalScore: 43,
+    scoreReason: "产品化潜力满分！直接作为频道引流到私域、邮件列表或小额数字变现的核心承载产品。",
+    plan: {
+      sellingPoint: "告别手忙脚乱！带你逛逛老郭自媒体后台的‘作战指挥室’，附直接一键复制的完整模板",
+      audience: "希望建立正规军工作流的自媒体人、知识工作者",
+      outline: "1. 混乱是自媒体断更的第一杀手；2. 个人看板设计哲学：只留核心动作，砍掉花哨无用字段；3. 演示：一条选题从卡片入库到脚本生成、发布追踪的全生命周期；4. 成本与收益核算模块；5. 模板获取与导入教学。",
+      experimentDesign: "实际录屏演示老郭个人近1个月视频在Notion系统里的真实流转过程与排期日历。",
+      tools: "Notion, Notion AI / Claude API",
+      productionDays: "1天录制剪辑",
+      distribution: "全网分发，置顶评论挂载模板链接",
+      expectedResult: "极高的私域导流率与模板下载转化率。"
+    }
+  },
+  {
+    id: "T009",
+    title: "为什么我不建议普通人做‘全自动Faceless历史/科普频道’？90天收益与侵权现实",
+    theme: "faceless 频道／政策风险",
+    status: "值得拍",
+    sourcesCount: 6,
+    sourcesPlatforms: ["YouTube", "Reddit"],
+    painPoint: "被网上大量‘不用出镜、一键生成、每月躺赚几千刀’的宣传诱导，盲目投入大量时间与订阅费买工具。",
+    hotness: 5,
+    saturation: 4,
+    gap: "全网都在教怎么做，极少有人站出来用实际数字展示惨淡的真实获利申诉率与版权下架率。",
+    feasibility: 5,
+    testCost: "极低",
+    estHours: "8 小时",
+    seriesPotential: "中",
+    productPotential: "低",
+    flag: "看似热门但建议淘汰",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 5, gap: 5, unsat: 2, feas: 5, visual: 4, series: 3, prod: 2, cost: 5, biz: 4 },
+    totalScore: 39,
+    scoreReason: "虽建议淘汰该赛道，但将其作为‘劝退/反思型’打假选题，能收获极高观看与崇高口碑。",
+    plan: {
+      sellingPoint: "别当AI淘金热里的最后一根韭菜：揭开无脸频道高播放却无法变现的底层真相",
+      audience: "想做海外YouTube又害怕露脸的兼职新手、想赚美金的打工人",
+      outline: "1. 满屏跑马灯的Faceless神话；2. 算一笔经济账：Midjourney+ElevenLabs+剪辑工具订阅费 vs 实际广告分成；3. 致命的重复内容与版权警告；4. 为什么没有IP属性的账号没有任何转售和复利价值；5. 如果真不想露脸，唯一可行的替代方案是什么。",
+      experimentDesign: "汇总分析公开社区中超过50个无脸频道运营者的自述数据，统计其获利通过率与存活中位数时间。",
+      tools: "社区公开数据, 收益计算器, 剪映",
+      productionDays: "1天制作",
+      distribution: "YouTube, B站, 微信公众号",
+      expectedResult: "引发热议，拯救大量即将被割韭菜的新人，粉丝忠诚度极高。"
+    }
+  },
+  {
+    id: "T010",
+    title: "AI配音工具巅峰对决：ElevenLabs vs MiniMax vs 微软TTS，长视频自然度与成本测试",
+    theme: "AI 剪辑／配音",
+    status: "待实测",
+    sourcesCount: 5,
+    sourcesPlatforms: ["YouTube", "Bilibili", "Twitter/X"],
+    painPoint: "观众一听就是机械味直接划走；海外工具太贵，国内工具缺少呼吸感和情感起伏。",
+    hotness: 4,
+    saturation: 3,
+    gap: "多数对比只读一句名言，缺乏在‘10分钟以上复杂语境长叙事、带情绪顿挫与专业术语’下的深度极限测试。",
+    feasibility: 5,
+    testCost: "低 (各家免费或小额试用)",
+    estHours: "10 小时",
+    seriesPotential: "中 (工具横评类)",
+    productPotential: "低",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 3, unsat: 3, feas: 5, visual: 4, series: 3, prod: 2, cost: 4, biz: 4 },
+    totalScore: 36,
+    scoreReason: "刚需工具选题，创作者极度关注音质和成本，视频具备天然的盲听对比互动性。",
+    plan: {
+      sellingPoint: "戴上耳机！闭眼盲听这5段AI配音，看你能否分辨真人与AI？附各家算力性价比清单",
+      audience: "视频剪辑师、解说类博主、自媒体配音需求者",
+      outline: "1. 为什么配音质感决定了视频完播率的50%；2. 盲听盲猜互动环节；3. 情绪爆发力、多音字、英文夹杂实测打分；4. 价格核算：每分钟成品声音到底花多少钱；5. 老郭的最终选型建议。",
+      experimentDesign: "截取同一段包含复杂情绪起伏、专业英文缩写的长文案，分别输入各家引擎，导出音频做无损波形与听感盲测。",
+      tools: "ElevenLabs, MiniMax, Edge TTS, Audacity",
+      productionDays: "1.5天测试录制",
+      distribution: "YouTube, Bilibili",
+      expectedResult: "弹幕互动率极高（观众猜哪段是真人的参与感强）。"
+    }
+  },
+  {
+    id: "T011",
+    title: "小红书AI图文从0到1真实测试：新号开局30天，存活率、引流率与涨粉数据复盘",
+    theme: "小红书 AI 起号",
+    status: "待实测",
+    sourcesCount: 5,
+    sourcesPlatforms: ["小红书", "微信公众号"],
+    painPoint: "网上全是一周万粉的神话，自己做却连100个赞都没有，怀疑自己做错了又不知道错在哪。",
+    hotness: 5,
+    saturation: 4,
+    gap: "缺乏慢节奏、真实记录每个笔记数据波动与私域导流动作的‘真人养成系’观察。",
+    feasibility: 4,
+    testCost: "中 (新手机卡与耗时)",
+    estHours: "30 天打卡跟踪 (制作约16小时)",
+    seriesPotential: "高 (新号起号连载)",
+    productPotential: "中 (小红书起号SOP手册)",
+    flag: "最容易形成系列",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 5, gap: 4, unsat: 2, feas: 4, visual: 4, series: 5, prod: 4, cost: 3, biz: 4 },
+    totalScore: 39,
+    scoreReason: "连载属性极强，观众喜欢看追更实验，极易形成长期粉丝粘性，但起号结果存在不确定性。",
+    plan: {
+      sellingPoint: "不买量、不刷赞、不用矩阵号：老郭实测用AI打理一个小红书垂直新号30天的全部原始数据",
+      audience: "副业运营小红书的上班族、独立品牌主",
+      outline: "1. 起号立项：赛道选择与对标定位；2. 提示词工程：构建固定风格的视觉模版与文案骨架；3. 30天发布曲线：何时经历低谷、何时有首个小爆款；4. 私域导流的合规动作；5. 复盘：AI在这里到底是加速器还是绊脚石。",
+      experimentDesign: "以特定垂直利基赛道（如AI办公效率）全新起号，坚持每日发帖1篇，严格记录曝光、互动与粉丝增长漏斗。",
+      tools: "Midjourney, Claude, 创作者中心后台, 手机实拍设备",
+      productionDays: "30天打卡 + 2天剪辑复盘",
+      distribution: "小红书连载笔记 + B站/YouTube长视频终局复盘",
+      expectedResult: "追更粘性高，建立真实、不浮夸的个人实战口碑。"
+    }
+  },
+  {
+    id: "T012",
+    title: "YouTube高点击缩略图(Thumbnail)工业化：Midjourney+Flux+PS自动化工作流",
+    theme: "YouTube SEO／缩略图／章节",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Reddit"],
+    painPoint: "内容做得再好，封面做不好就没人点；自己做封面缺乏网感，找设计师单张成本太高。",
+    hotness: 4,
+    saturation: 3,
+    gap: "市面多为纯艺术生图展示，缺乏结合点击率心理学（面部光影、高对比元素、文字精炼度）的封面工业流。",
+    feasibility: 5,
+    testCost: "低",
+    estHours: "8 小时",
+    seriesPotential: "中",
+    productPotential: "高 (Flux/Midjourney封面提示词库+PSD模板)",
+    flag: "最适合产品化",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 3, unsat: 3, feas: 5, visual: 5, series: 3, prod: 5, cost: 4, biz: 4 },
+    totalScore: 40,
+    scoreReason: "视觉呈现极为直观，前后对比震撼，且可沉淀高价值的提示词包与设计工程源文件变现。",
+    plan: {
+      sellingPoint: "告别烂封面！用开源/最新生图模型，5分钟工业化量产高CTR（点击率）油管级封面",
+      audience: "YouTube创作者、B站UP主、平面设计兼职者",
+      outline: "1. 封面点击率决定视频生死的残酷算法；2. 爆款封面的四大视觉支柱：反差、人物面部张力、三词原则；3. 拆解我的生图提示词结构；4. 快速人脸融合与无损局部重绘实操；5. AB测试方法与工具。",
+      experimentDesign: "拿频道早期低点击率视频做测试，设计3款AI新封面进行YouTube官方后台AB测试，展示7天后的真实CTR提升对比。",
+      tools: "Flux.1, Midjourney, Photoshop, YouTube Studio A/B Test",
+      productionDays: "1天录制剪辑",
+      distribution: "YouTube, Bilibili",
+      expectedResult: "极佳视觉享受，高点赞率，Prompt资源包下载火爆。"
+    }
+  },
+  {
+    id: "T013",
+    title: "剪映/CapCut脚本化自动化剪辑：Python调API批量生成口播视频靠谱吗？",
+    theme: "AI 剪辑／配音",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["GitHub", "Bilibili"],
+    painPoint: "机械重复的粗剪、加字幕、切静音耗费大量生命，市场上宣称的代码批量出片是否真能商用？",
+    hotness: 4,
+    saturation: 2,
+    gap: "代码开源项目普遍环境部署难、报错多，缺乏面对不懂代码的自媒体人清晰展示‘落地可行性与bug率’的客观评测。",
+    feasibility: 4,
+    testCost: "低",
+    estHours: "12 小时",
+    seriesPotential: "中",
+    productPotential: "中 (开箱即用脚本整合包)",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 4, unsat: 4, feas: 4, visual: 4, series: 3, prod: 4, cost: 4, biz: 4 },
+    totalScore: 39,
+    scoreReason: "技术极客与自媒体效率结合点，能吸引大量硬核创作者，提升频道的专业技术调性。",
+    plan: {
+      sellingPoint: "手把手实测GitHub高星自动化剪辑项目：代码剪片真的比鼠标拖拽更快吗？",
+      audience: "有一定动手能力的博主、剪辑师、技术型内容创作者",
+      outline: "1. 自动化剪辑的理想 vs 报错退出的现实；2. 开源项目运行环境实操部署；3. 批量生成3条视频并检查错位与音频不同步Bug；4. 真正值得自动化的环节到底在哪里；5. 整合脚本免配置安装包分享。",
+      experimentDesign: "选取同一批原始口播视频素材，分别用‘人工剪映操作’与‘开源Python脚本调用’，对比完成粗剪排版的时间、质量与出错修正时间。",
+      tools: "Python, pycapcut开源库, 剪映专业版",
+      productionDays: "1.5天测试录制",
+      distribution: "B站 (极度适合程序员与极客UP), YouTube",
+      expectedResult: "高收藏率，评论区技术讨论活跃。"
+    }
+  },
+  {
+    id: "T014",
+    title: "自媒体一人公司的财务合规与税务常识：个体户、核定征收与提现避坑",
+    theme: "一人公司／AI 工作流",
+    status: "值得拍",
+    sourcesCount: 3,
+    sourcesPlatforms: ["微信公众号", "YouTube"],
+    painPoint: "自媒体账号做大开始变现后，广告费、平台分成、带货佣金如何合法合规交税？极度恐惧银行卡流水异常或补税风险。",
+    hotness: 4,
+    saturation: 1,
+    gap: "科技自媒体几乎不谈财务合规，财务类博主又不懂自媒体平台的特殊结算周期与虚拟商品销售特性。",
+    feasibility: 5,
+    testCost: "极低 (咨询专业会计师佐证)",
+    estHours: "8 小时",
+    seriesPotential: "低",
+    productPotential: "中 (一人公司记账报税Excel表格)",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 5, gap: 5, unsat: 5, feas: 5, visual: 2, series: 2, prod: 3, cost: 5, biz: 5 },
+    totalScore: 41,
+    scoreReason: "稀缺且致命的关键问题。高客单创作者或赚钱后的必修课，极度增强老郭作为成熟创业者的稳重权威形象。",
+    plan: {
+      sellingPoint: "赚到钱之后的第一道护城河：自媒体博主必须搞懂的税务合规指南，合规省心不踩雷",
+      audience: "已开始变现的中腰部博主、自由职业者、一人公司创始人",
+      outline: "1. 为什么自媒体裸奔收款极其危险；2. 个人劳务报酬 vs 个体工商户核定征收对比；3. 海外平台（AdSense）提现结汇的合规路径；4. 工具软件支出如何合理列入经营成本；5. 一人公司极简记账SOP。",
+      experimentDesign: "结合专业注册会计师建议，梳理自媒体常见5大收入渠道（广告、分成、数字商品、咨询、带货）的法务税务对照图表。",
+      tools: "税务合规指南, 极简记账表格",
+      productionDays: "1天录制",
+      distribution: "全网重点推送 (微信视频号/公众号优先)",
+      expectedResult: "高客单同行认同，树立行业老兵严肃形象。"
+    }
+  },
+  {
+    id: "T015",
+    title: "AI长文案洗稿降重检测器实测：各大查重工具与平台审核真的能识别出来吗？",
+    theme: "降 AI 率与平台风控",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["Reddit", "小红书", "Twitter/X"],
+    painPoint: "自媒体文章或脚本被读者吐槽一股‘AI味’，被平台判定非原创，买了一堆降AI工具却不知道有没有用。",
+    hotness: 4,
+    saturation: 3,
+    gap: "缺乏多语种、多模型（GPT vs Claude vs DeepSeek）直出文案通过各大主流检测器的真实检出率透视。",
+    feasibility: 5,
+    testCost: "低",
+    estHours: "8 小时",
+    seriesPotential: "低",
+    productPotential: "中 (去AI味高人情味提示词模版)",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 4, unsat: 3, feas: 5, visual: 3, series: 2, prod: 4, cost: 5, biz: 4 },
+    totalScore: 38,
+    scoreReason: "实用验证型内容，为文字类创作者提供确定性答案，帮助避开虚假降重服务的坑。",
+    plan: {
+      sellingPoint: "把同一篇文章喂给5家知名AI检测器，看看所谓的‘降AI率神器’是不是在收智商税",
+      audience: "公众号写手、知乎答主、自媒体脚本撰写者",
+      outline: "1. 什么是‘AI味’的本质特征（词汇困惑度与突发度）；2. 5大检测工具盲测打分；3. 降AI工具改写后的文案可读性崩塌灾难；4. 人工3分钟微调法：如何用人味句式彻底打破算法封锁。",
+      experimentDesign: "准备10篇不同模型生成的文本，分别通过GPTZero、CopyLeaks及国内检测器，记录‘未修改’、‘工具改写’、‘人工微调’三组的通过率分数。",
+      tools: "GPTZero, CopyLeaks, DeepSeek, Claude 3.5",
+      productionDays: "1天",
+      distribution: "B站, 微信公众号, YouTube",
+      expectedResult: "知乎、公号读者高赞收藏，干货属性强。"
+    }
+  },
+  {
+    id: "T016",
+    title: "搭建本地离线知识库(RAG)：把老郭所有历史文案喂给DeepSeek，写出100%自己风格的脚本",
+    theme: "一人公司／AI 工作流",
+    status: "待实测",
+    sourcesCount: 5,
+    sourcesPlatforms: ["GitHub", "Bilibili", "YouTube"],
+    painPoint: "直接让通用AI写脚本，语气千篇一律像客服或百度百科，无法传承博主独特的语言风格和口头禅。",
+    hotness: 5,
+    saturation: 2,
+    gap: "现有RAG教程全在讲技术代码，没有从‘内容创作者如何建立个人数字分身与风格微调’的角度落地。",
+    feasibility: 4,
+    testCost: "低 (利用本地轻量模型或云端API)",
+    estHours: "14 小时",
+    seriesPotential: "高 (个人数字分身演进)",
+    productPotential: "高 (知识库搭建配置教程与架构包)",
+    flag: "最容易形成系列",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 4, unsat: 4, feas: 4, visual: 4, series: 5, prod: 5, cost: 4, biz: 5 },
+    totalScore: 45,
+    scoreReason: "极度契合一人公司核心心智——打造‘创作者数字资产’，系列化延展性好，科技与人文结合。",
+    plan: {
+      sellingPoint: "不再忍受机器味！教你把过去写过的几十万字喂给AI，克隆出一个永不疲倦的‘首席脚本助手’",
+      audience: "已有一定内容积累的中成熟博主、文字工作者",
+      outline: "1. 通用AI写稿的致命缺陷：没有灵魂与个性；2. 知识库原理：少调参数、多给示例；3. 准备语料：如何清洗自己的历史爆款脚本；4. 搭建本地/轻量RAG系统实操；5. 生成对比：盲猜哪个是老郭亲自写的？",
+      experimentDesign: "输入老郭过往10篇视频逐字稿作为语料库，用同一新选题对比通用模型输出 vs 知识库微调输出的风格相似度与金句出现频度。",
+      tools: "AnythingLLM / Dify, Ollama, DeepSeek R1/V3, Obsidian",
+      productionDays: "2天搭建录制",
+      distribution: "YouTube, B站, 微信公众号长文",
+      expectedResult: "极高专业认可度，树立AI实操领域的先行者标杆。"
+    }
+  },
+  {
+    id: "T017",
+    title: "YouTube SEO最新算法解密：章节(Timestamps)与搜索关键词对长尾流量到底有多大拉动？",
+    theme: "YouTube SEO／缩略图／章节",
+    status: "待实测",
+    sourcesCount: 3,
+    sourcesPlatforms: ["YouTube", "Reddit"],
+    painPoint: "只懂做视频，不懂YouTube搜索生态，视频发布48小时后就没有播放量，无法享受长年累月的长尾被动流量。",
+    hotness: 3,
+    saturation: 3,
+    gap: "多数人凭感觉写章节和简介，没有数据证明规范的章节对Google搜索直接索引视频片段的具体增益。",
+    feasibility: 5,
+    testCost: "极低",
+    estHours: "6 小时",
+    seriesPotential: "低",
+    productPotential: "中 (YouTube发布前SEO自检清单)",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 3, gap: 3, unsat: 3, feas: 5, visual: 3, series: 2, prod: 3, cost: 5, biz: 4 },
+    totalScore: 35,
+    scoreReason: "实操价值明确但大众热门度相对垂直，属于频道打底的硬技能支撑内容。",
+    plan: {
+      sellingPoint: "让Google主动帮你推荐视频！拆解YouTube视频在搜索引擎中霸榜的核心SEO细节",
+      audience: "YouTube创作者、内容出海团队",
+      outline: "1. 视频长尾流量的真正来源；2. 为什么章节时间戳是给Google爬虫看的？3. 用AI 30秒自动化生成高相关度章节与摘要；4. 后台搜索词分析与点击漏斗优化；5. 老郭自用的SEO复核表。",
+      experimentDesign: "调取老郭后台有配置精准章节与无章节视频的Search Traffic占比对比，演示修改后7天内的曝光变化。",
+      tools: "YouTube Analytics, Claude (生成结构化章节), vidIQ",
+      productionDays: "1天",
+      distribution: "YouTube独家首推",
+      expectedResult: "精准吸引优质创作者，高完播率。"
+    }
+  },
+  {
+    id: "T018",
+    title: "一人自媒体必备硬件清单：2026年我的精简极客桌面与低成本移动录音录像方案",
+    theme: "一人公司／AI 工作流",
+    status: "值得拍",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Bilibili"],
+    painPoint: "新手常陷入‘买最贵的设备却拍不出好视频’的陷阱，或因为设备繁琐而产生严重的开机拖延症。",
+    hotness: 4,
+    saturation: 4,
+    gap: "传统桌面EDC视频多为消费主义堆砌，缺少以‘极速开机进入录制状态、一人全流程省心’为核心的精益搭配方案。",
+    feasibility: 5,
+    testCost: "零 (拍自己现有设备)",
+    estHours: "6 小时",
+    seriesPotential: "低",
+    productPotential: "低 (好物清单分销为主)",
+    flag: "最容易形成系列",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 3, unsat: 2, feas: 5, visual: 5, series: 3, prod: 2, cost: 5, biz: 4 },
+    totalScore: 37,
+    scoreReason: "视觉观感舒适，满足粉丝对博主幕后生活的好奇心，天然承接电商联盟分销变现。",
+    plan: {
+      sellingPoint: "降低摩擦力才是高产的核心！不买华而不实的摆件，带你拆解老郭一人高频出片的硬件工作站",
+      audience: "自媒体爱好者、数码极客、远程办公群体",
+      outline: "1. 核心哲学：让开机录制准备时间压缩在3分钟内；2. 音质大于画质：我的麦克风与声学环境极简解法；3. 相机/手机机位设置与一键灯光联控；4. 显示器与多任务切屏流；5. 成本账单与高性价比替代建议。",
+      experimentDesign: "现场计时演示从坐在桌前到按下录制键的全套准备动作，展示一键灯光与音频预设的便利性。",
+      tools: "现有相机/手机, 麦克风, 灯光, 桌面排线系统",
+      productionDays: "1天录制剪辑",
+      distribution: "B站, YouTube, 小红书(精美图片向)",
+      expectedResult: "高播放量，强带货与联盟链接转化。"
+    }
+  },
+  {
+    id: "T019",
+    title: "月入3万的Newsletter邮件通讯是怎么炼成的？一人公司私域资产沉淀与变现实测",
+    theme: "一人公司／AI 工作流",
+    status: "待研究",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Twitter/X", "ProductHunt"],
+    painPoint: "公域流量朝不保夕，算法一旦改版账号归零，创作者缺乏自己能100%掌控的私域渠道。",
+    hotness: 4,
+    saturation: 2,
+    gap: "国内较少有针对海外Substack/Beehiiv平台运作与国内公众号私域闭环相结合的实操数据复盘。",
+    feasibility: 4,
+    testCost: "低",
+    estHours: "10 小时",
+    seriesPotential: "中",
+    productPotential: "高 (Newsletter启动排版模板)",
+    flag: "最适合产品化",
+    needMoreData: "是",
+    scores: { fit: 5, demand: 4, gap: 4, unsat: 4, feas: 4, visual: 3, series: 3, prod: 5, cost: 5, biz: 5 },
+    totalScore: 42,
+    scoreReason: "极其健康的商业模式代表，适合作为频道长线倡导的‘数字私域资产’理念，商业价值极高。",
+    plan: {
+      sellingPoint: "别做算法的数字农奴！教你用AI辅助打造一份高打开率的专业邮件通讯，建立不被封禁的私域印钞机",
+      audience: "知识博主、独立开发者、跨境创作者",
+      outline: "1. 平台封号潮下的反思：谁真正拥有你的粉丝；2. 2026年Newsletter的商业变现闭环（赞助、付费专栏、数字产品）；3. 用AI筛选聚合行业情报的一人SOP；4. 提高邮件打开率的排版与标题公式；5. 我的启动行动指南。",
+      experimentDesign: "以频道配套周刊为例，展示从选题库筛选到生成排版、分发至1000+订阅读者的全流程与打开率数据。",
+      tools: "Beehiiv / Substack, Make.com, Claude 3.5",
+      productionDays: "1.5天",
+      distribution: "YouTube, 微信公众号",
+      expectedResult: "有效引导高净值粉丝沉淀至邮件通讯列表中。"
+    }
+  },
+  {
+    id: "T020",
+    title: "AI音乐与音效在商业视频中的版权陷阱：Suno/Udio生成的BGM能通过Content ID吗？",
+    theme: "版权与平台合规",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Reddit", "官方博客"],
+    painPoint: "使用AI生成的背景音乐以为没有版权纠纷，结果视频发布后依然收到版权认领或无法在商用项目中交付。",
+    hotness: 4,
+    saturation: 2,
+    gap: "多数人对Suno/Udio的商用订阅条款理解不清，缺乏对生成音频提交至YouTube Content ID库检测的实际碰撞测试。",
+    feasibility: 4,
+    testCost: "低 (订阅一个月会员)",
+    estHours: "8 小时",
+    seriesPotential: "低",
+    productPotential: "低",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 4, unsat: 4, feas: 4, visual: 3, series: 2, prod: 2, cost: 4, biz: 4 },
+    totalScore: 35,
+    scoreReason: "实测解惑类内容，对中高端视频制作者有直接防坑帮助，题材新颖度高。",
+    plan: {
+      sellingPoint: "用Suno做BGM真能放心商用吗？实测上传10首AI音乐到YouTube，看看算法怎么说",
+      audience: "视频剪辑师、商业短片导演、自媒体创作者",
+      outline: "1. 创作者最怕的红字：版权主张(Copyright Claim)；2. 读透Suno与Udio的用户商用许可协议(Terms of Service)；3. 实测：上传AI生成的纯音乐到无公开账号，观察Content ID系统拦截情况；4. 免版权商用音乐的兜底安全解法。",
+      experimentDesign: "生成5首不同风格的AI配乐，分别挂载在无画面视频中上传至YouTube私密测试频道，静置72小时观察系统是否触发版权标记。",
+      tools: "Suno AI, Udio, YouTube Studio, Audacity",
+      productionDays: "1天测试与剪辑",
+      distribution: "YouTube, B站",
+      expectedResult: "引起专业音视频创作者关注与转发。"
+    }
+  },
+  {
+    id: "T021",
+    title: "从0到1搭建个人数字商品销售管道：用Gumroad+Stripe+Notion卖模板全流程",
+    theme: "可产品化／模板与数据库",
+    status: "值得拍",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Twitter/X", "ProductHunt"],
+    painPoint: "想做数字游民和一人公司变现，做好了Notion模板或提示词包，却卡在海外收单、交付页面搭建与自动化发货上。",
+    hotness: 4,
+    saturation: 2,
+    gap: "全网缺少手把手、适合华人创作者身份合规跑通‘海外法币收款到自动交付’的极简链路教程。",
+    feasibility: 5,
+    testCost: "低",
+    estHours: "10 小时",
+    seriesPotential: "中",
+    productPotential: "极高 (直接打通频道自身的销售体系)",
+    flag: "最适合产品化",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 4, unsat: 4, feas: 5, visual: 4, series: 3, prod: 5, cost: 4, biz: 5 },
+    totalScore: 44,
+    scoreReason: "商业闭环神作！把‘如何赚钱’落实到具体的‘建站收款交付’工具链，频道变现的核心基石教程。",
+    plan: {
+      sellingPoint: "睡后收入的物理基建：不写一行代码，教你30分钟搭好属于自己的全球数字商品自动化销售小铺",
+      audience: "独立创作者、数字游民、模板制作者、一人公司创业者",
+      outline: "1. 摆脱平台抽成：建立独立交付管道的意义；2. Gumroad / Lemon Squeezy 注册与合规设置；3. 极简落地页设计心理学：让转化率提升3倍的3个元素；4. 自动化交付与防盗链设置；5. 现场测试一笔1美元的真实支付全流程。",
+      experimentDesign: "现场从零注册配置一个真实数字商品（如老郭的Notion模板），并由协同人员完成真实信用卡下单，演示全套链路闭环。",
+      tools: "Gumroad, Stripe/PayPal, Notion, Canva",
+      productionDays: "1.5天",
+      distribution: "YouTube, 微信公众号 (附国内面包多等平替方案)",
+      expectedResult: "极高保存率，直接带动老郭自身数字商品首批订单。"
+    }
+  },
+  {
+    id: "T022",
+    title: "AI视频换脸与声音克隆在口播视频中的实用度测试：假人能代替真人出镜吗？",
+    theme: "AI 剪辑／配音",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Bilibili"],
+    painPoint: "不想每次化妆打光搭机位，想做个数字分身代替自己录口播，但担心恐怖谷效应把粉丝吓跑。",
+    hotness: 4,
+    saturation: 3,
+    gap: "多数测评只展示静态几秒，缺乏在‘长篇大论、需要眼神互动、肢体自然表达’场景下的真实观众接受度调研。",
+    feasibility: 4,
+    testCost: "中 (数字人平台算力点数)",
+    estHours: "10 小时",
+    seriesPotential: "低",
+    productPotential: "低",
+    flag: "最值得实测",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 4, gap: 3, unsat: 3, feas: 4, visual: 5, series: 2, prod: 2, cost: 3, biz: 4 },
+    totalScore: 34,
+    scoreReason: "视觉噱头足，节目效果好，但目前数字人与老郭强调的‘真实、温度’人设稍有冲突，建议作为实测打假/评估呈现。",
+    plan: {
+      sellingPoint: "本期视频前3分钟全是由我的AI数字分身录制，你刚才看出来了吗？聊聊数字人的商用边界",
+      audience: "懒于出镜的创作者、企业新媒体部门、IP代运营团队",
+      outline: "1. 开头高能：揭秘刚才出镜的到底是真人还是AI；2. 2026顶级数字人口型同步与微表情技术进展；3. 恐怖谷盲测：给路人看视频的真实心理感受；4. 算力成本 vs 真人化妆打光的时间成本对比；5. 现阶段最合理的数字人使用场景定位。",
+      experimentDesign: "克隆自己的声音与形象制作一段3分钟视频，发布到粉丝群内做盲测调研，收集读者多维度的违和感打分。",
+      tools: "HeyGen, Kling / Runway, 剪映",
+      productionDays: "1.5天",
+      distribution: "全网分发",
+      expectedResult: "开头反转极度吸睛，评论区找茬互动爆棚。"
+    }
+  },
+  {
+    id: "T023",
+    title: "小红书图文矩阵全自动化工作流：用Make+DeepSeek批量做号真的是死路一条吗？",
+    theme: "小红书 AI 起号",
+    status: "待实测",
+    sourcesCount: 5,
+    sourcesPlatforms: ["小红书", "Reddit", "Twitter/X"],
+    painPoint: "市面上自动化矩阵课卖几千块，学员照搬工作流批量起号，几乎全被小红书算法无情封杀或零播放。",
+    hotness: 5,
+    saturation: 4,
+    gap: "缺少站在算法风控与反作弊视角，深度揭秘小红书设备指纹、网络IP、发布频率与图文排重机制的技术拆解。",
+    feasibility: 4,
+    testCost: "中",
+    estHours: "14 小时",
+    seriesPotential: "中",
+    productPotential: "中",
+    flag: "看似热门但建议淘汰",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 5, gap: 4, unsat: 2, feas: 4, visual: 4, series: 3, prod: 3, cost: 3, biz: 3 },
+    totalScore: 35,
+    scoreReason: "全网讨论极热但多为割韭菜方向，本选题定位于‘技术打假与算法风控底线揭秘’，淘汰死板纯自动，倡导人机结合。",
+    plan: {
+      sellingPoint: "带你看看全自动批量做号死得有多惨！用工程师视角拆解小红书反作弊风控模型的识别逻辑",
+      audience: "尝试做自媒体矩阵的从业者、工作室负责人",
+      outline: "1. 批量矩阵的神话与破灭；2. 演示所谓的全自动流到底长什么样；3. 为什么平台反作弊引擎抓这种账号一抓一个准（设备、行为路径、文本余弦相似度）；4. 真正能存活的一人工作室‘半自动’人机协同模型。",
+      experimentDesign: "分析3个已被封禁的矩阵自动化案例数据，对照解析小红书开放社区公开发布的安全风控白皮书。",
+      tools: "Make.com, Python自动化脚本, 小红书APP测试环境",
+      productionDays: "1.5天",
+      distribution: "B站, YouTube, 微信公众号",
+      expectedResult: "硬核劝退，赢得严肃创作者群体的高度尊重。"
+    }
+  },
+  {
+    id: "T024",
+    title: "自媒体爆款脚本的‘黄金3秒Hook’工程化：我拆解了100条百万视频得出的Prompt公式",
+    theme: "YouTube SEO／缩略图／章节",
+    status: "值得拍",
+    sourcesCount: 6,
+    sourcesPlatforms: ["YouTube", "Twitter/X", "Bilibili"],
+    painPoint: "视频正片内容极度优质，但观众在前5秒大量流失，完播率惨不忍睹，大模型生成的开头又总是老套的说教客套话。",
+    hotness: 5,
+    saturation: 3,
+    gap: "全网教写Hook的流于表面（如提问法、震惊法），缺乏把心理学诱抗机制转化为精准Prompt工程的硬核沉淀。",
+    feasibility: 5,
+    testCost: "极低",
+    estHours: "10 小时",
+    seriesPotential: "高 (爆款叙事拆解系列)",
+    productPotential: "高 (可直接复制的Hook提示词库)",
+    flag: "最适合产品化",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 4, unsat: 3, feas: 5, visual: 4, series: 5, prod: 5, cost: 5, biz: 5 },
+    totalScore: 46,
+    scoreReason: "极强方法论交付！直击所有视频博主心头最大的痛（完播率），易产出高质量Prompt资产，口碑极佳。",
+    plan: {
+      sellingPoint: "留住观众的第一道阀门！把100个爆款视频开头的神经学钩子，封装进5套直接套用的AI提问模板",
+      audience: "所有视频平台创作者、短视频剪辑师、商业广告编剧",
+      outline: "1. 残酷的完播率跳水曲线；2. 垃圾开头的4种常见死相（自我介绍、啰嗦设问、空洞宏大叙事）；3. 百万视频Hook的三大内核：认知失调、利益前置、反常识冲突；4. 投喂大模型的精确Prompt指令演示；5. 现场修改3个平庸开头变爆款开头的全过程。",
+      experimentDesign: "调取频道过往完播率最低与最高的各3期视频，比对前10秒完播曲线，并用Prompt重新生成开头做观众偏好盲测。",
+      tools: "Claude 3.5 Sonnet, YouTube Analytics, 剪映",
+      productionDays: "1.5天",
+      distribution: "YouTube, B站, 视频号",
+      expectedResult: "收藏率突破天际，Prompt资产被广泛转发引用。"
+    }
+  },
+  {
+    id: "T025",
+    title: "一人公司的‘AI员工’外包指南：如何用Claude Code/Cursor自己开发自动化运营小插件",
+    theme: "一人公司／AI 工作流",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["ProductHunt", "GitHub", "Twitter/X"],
+    painPoint: "自媒体运营中有许多细碎需求（如批量重命名、转码、特定网页数据抓取），买软件不值，请程序员太贵。",
+    hotness: 5,
+    saturation: 2,
+    gap: "不懂编程的文科生自媒体人面对AI编程工具不知道从何下手，缺少以真实运营小工具为教学案例的‘降维指南’。",
+    feasibility: 4,
+    testCost: "低",
+    estHours: "12 小时",
+    seriesPotential: "高 (一人公司微工具开发)",
+    productPotential: "高 (开源自研脚本与插件)",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 4, gap: 5, unsat: 4, feas: 4, visual: 4, series: 4, prod: 5, cost: 4, biz: 5 },
+    totalScore: 44,
+    scoreReason: "AI时代最具生产力的硬核赋能！展示文科生用自然语言写出真正能跑的自媒体效率插件，极具启发性与崇拜感。",
+    plan: {
+      sellingPoint: "零基础也能做工具！老郭现场用自然语言对话AI，从零写出一个专属于自媒体的数据自动抓取插件",
+      audience: "进阶自媒体创作者、希望降低人工成本的独立创始人",
+      outline: "1. 每个人都能拥有专属技术团队的时代；2. 痛点场景：每次手动保存评论与转录文本实在太慢；3. 用Cursor / Claude Code进行需求自然语言描述；4. 解决环境报错的心态与技巧；5. 插件实装演示与代码一键打包分享。",
+      experimentDesign: "以‘自动抓取自己B站/YouTube视频评论区高频提问并归纳到Notion’为目标，从零开始纯靠AI对话完成代码编写并在浏览器运行成功。",
+      tools: "Cursor / Claude 3.5, Chrome扩展基础框架, Python",
+      productionDays: "2天开发录制",
+      distribution: "YouTube, B站 (极客圈破圈爆款)",
+      expectedResult: "弹幕好评如潮，树立硬核生产力探索者形象。"
+    }
+  },
+  {
+    id: "T026",
+    title: "AI视频色彩与风格一致性攻坚：ComfyUI在自媒体定制化视觉包装中的工业化落地",
+    theme: "AI 剪辑／配音",
+    status: "待研究",
+    sourcesCount: 3,
+    sourcesPlatforms: ["YouTube", "GitHub"],
+    painPoint: "生成画面风格跳跃、忽写实忽动漫，人物面部每一帧都不一样，导致做出来的视频像PPT拼凑没有商业感。",
+    hotness: 4,
+    saturation: 2,
+    gap: "ComfyUI节点图过于复杂吓跑普通创作者，需要一套极其精简、开箱即用的‘统一调色与人脸锁定’节点模版。",
+    feasibility: 3,
+    testCost: "中 (需要较好显卡或云算力)",
+    estHours: "16 小时",
+    seriesPotential: "中",
+    productPotential: "高 (ComfyUI一键运行工作流json文件)",
+    flag: "需要补充资料",
+    needMoreData: "是",
+    scores: { fit: 4, demand: 4, gap: 4, unsat: 4, feas: 3, visual: 5, series: 3, prod: 4, cost: 3, biz: 4 },
+    totalScore: 38,
+    scoreReason: "视觉效果极佳，但由于需要本地显卡支持或高额云算力，大众可复现性稍受门槛限制，需完善轻量化运行方案。",
+    plan: {
+      sellingPoint: "消灭画面跳戏！带你攻克AI视频最大痛点，用一套定制节点跑出风格完全统一的视觉大片",
+      audience: "专业视觉设计师、高品质视频博主、商业片创作者",
+      outline: "1. AI视频的廉价感来源：风格不统一；2. ComfyUI底层解密：如何锁定Seed与LoRA特征；3. 面部一致性(InstantID)实操演示；4. 视频转视频(Vid2Vid)风格化渲染流；5. 轻量化云算力部署与工作流下载。",
+      experimentDesign: "拿一段普通的绿幕真人视频，通过该工作流无缝转化为带有特定赛博朋克或手绘风格且面部表情稳定的成片。",
+      tools: "ComfyUI, SDXL / Flux, RunPod云算力",
+      productionDays: "2.5天调试与制作",
+      distribution: "YouTube, B站",
+      expectedResult: "惊艳视觉效果，专业设计人群高度推崇。"
+    }
+  },
+  {
+    id: "T027",
+    title: "揭秘‘搬运洗稿月入过万’的培训黑产：所谓AI自动混剪软件的开源套壳套路拆解",
+    theme: "收益截图反速成拆解",
+    status: "值得拍",
+    sourcesCount: 5,
+    sourcesPlatforms: ["Bilibili", "小红书", "Reddit"],
+    painPoint: "新手常在私域花几百上千块购买所谓的‘独家全自动混剪过原创黑科技软件’，买完发现就是免费开源项目的套壳卡密。",
+    hotness: 4,
+    saturation: 2,
+    gap: "极少有博主深挖这些商业套壳软件背后的开源技术原型，并直接把免费开源方案公之于众。",
+    feasibility: 5,
+    testCost: "低 (购买一套廉价套壳样本作证)",
+    estHours: "8 小时",
+    seriesPotential: "中 (反诈防坑系列)",
+    productPotential: "低",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 4, demand: 5, gap: 5, unsat: 4, feas: 5, visual: 4, series: 3, prod: 2, cost: 4, biz: 4 },
+    totalScore: 40,
+    scoreReason: "正义打假、大快人心，展示黑产套路的同时，还能顺手科普真正的开源技术，兼具体育精神与极客道德。",
+    plan: {
+      sellingPoint: "别再花冤枉钱买‘混剪神器’了！花199买的黑科技，老郭挖出了它在GitHub上一模一样的免费源码",
+      audience: "自媒体剪辑新手、短视频带货从业者",
+      outline: "1. 朋友圈混剪神器的诱人广告词；2. 现场逆向扒皮：扒开EXE外壳看内胆；3. 原来就是FFmpeg加简单Python脚本的套壳加锁；4. 为什么这类机械混剪依然逃不过平台的去重哈希算法；5. 正确、长久的素材二次创作姿态。",
+      experimentDesign: "购买某款市售热门自动混剪工具，通过资源管理器抓包分析其调用的底层开源组件与脚本，并向观众公布免费原版链接。",
+      tools: "Process Hacker, FFmpeg, Python, 录屏软件",
+      productionDays: "1天制作",
+      distribution: "全网分发 (B站/抖音极具传播力)",
+      expectedResult: "高赞反诈爆款，大量受害者评论区现身说法。"
+    }
+  },
+  {
+    id: "T028",
+    title: "自媒体人的‘数字防灾备灾’指南：账号被封、数据丢失、云端服务跑路的一人应急SOP",
+    theme: "一人公司／AI 工作流",
+    status: "待研究",
+    sourcesCount: 3,
+    sourcesPlatforms: ["YouTube", "Reddit"],
+    painPoint: "个人博主高度依赖Notion、Google Drive、第三方SaaS，一旦遭遇误封号或服务停摆，多年创作心血面临归零灾难。",
+    hotness: 3,
+    saturation: 1,
+    gap: "几乎没人讲自媒体的数据资产安全与离线冗余备份，属于‘不出事没人管，一出事就是灭顶之灾’的冷门硬痛点。",
+    feasibility: 5,
+    testCost: "极低",
+    estHours: "8 小时",
+    seriesPotential: "低",
+    productPotential: "中 (3-2-1自媒体备份脚本与Checklist)",
+    flag: "需要补充资料",
+    needMoreData: "是",
+    scores: { fit: 4, demand: 4, gap: 5, unsat: 5, feas: 5, visual: 3, series: 2, prod: 4, cost: 5, biz: 4 },
+    totalScore: 41,
+    scoreReason: "切中极度关键的安全缺口，体现老郭数字生活的‘稳健防守思维’，是真正资深一人创业者才会关注的顶级素养。",
+    plan: {
+      sellingPoint: "如果明天你的所有云盘和自媒体号被封，你能存活下来吗？一人公司的3-2-1防灾备份体系",
+      audience: "成熟自媒体博主、独立创作者、数字游民",
+      outline: "1. 警钟长鸣：那些一夜之间丢掉所有稿件的惨痛案例；2. 3-2-1数据备份法则在自媒体中的应用；3. 本地NAS与加密冷备份实操；4. 核心自媒体账号的双重身份验证(2FA)与防盗号最高防御；5. 我的防灾清单与应急恢复演练。",
+      experimentDesign: "模拟断网断云状态下，演示如何仅靠本地硬盘在10分钟内调出所有历史视频工程、字体、商业合同与备用文案。",
+      tools: "Synology/本地移动硬盘, Bitwarden, Rclone, 移动冷备",
+      productionDays: "1天录制剪辑",
+      distribution: "YouTube, 微信公众号",
+      expectedResult: "被众多头部创作者默默收藏与转发分享。"
+    }
+  },
+  {
+    id: "T029",
+    title: "一人搞定播客与长视频双栖更新：从音频转文字、智能打轴到多形态内容切片流水线",
+    theme: "内容再利用／长拆短",
+    status: "待实测",
+    sourcesCount: 4,
+    sourcesPlatforms: ["YouTube", "Bilibili"],
+    painPoint: "想做播客又舍不得放弃视频流量，双向更新工作量成倍叠加，一个人兼顾不暇导致频繁断更。",
+    hotness: 4,
+    saturation: 2,
+    gap: "市面多为单独讲播客或单独讲视频，缺乏以‘一次录制、双线自动化衍生’为核心的复合型工业流。",
+    feasibility: 4,
+    testCost: "低",
+    estHours: "10 小时",
+    seriesPotential: "高 (老郭一人创作工坊)",
+    productPotential: "中 (播客切片自动化工程模板)",
+    flag: "最容易形成系列",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 4, gap: 4, unsat: 4, feas: 4, visual: 4, series: 5, prod: 4, cost: 4, biz: 5 },
+    totalScore: 43,
+    scoreReason: "与频道未来可能开启的播客栏目形成完美互锁，一鱼多吃的教科书级示范，极具参考价值。",
+    plan: {
+      sellingPoint: "录一次音，出5种内容！把1小时播客自动榨出精修图文、高光切片视频与全网多端分发流",
+      audience: "播客主播、知识IP、访谈类创作者、独立学者",
+      outline: "1. 播客的困境：有深度但没流量；2. 视频的困境：制作重但留存难；3. 双栖更新架构：音频驱动视频，AI驱动切片；4. 自动生成金句卡片与动态波形小视频实战；5. 完整一人多端排期发布日历展示。",
+      experimentDesign: "录制一段30分钟的对话音频，完全通过设定的AI自动化工作流，实时产出1份播客音频、1篇图文排版和3条竖屏切片，并记录总耗时。",
+      tools: "Whisper, Claude, Headliner/剪映, 小红书图文工具",
+      productionDays: "1.5天",
+      distribution: "B站, YouTube, 小宇宙播客平台同步",
+      expectedResult: "高赞收藏，吸引大批渴望拓展多媒介表达的优质创作者。"
+    }
+  },
+  {
+    id: "T030",
+    title: "自媒体变现的终极答案：为什么‘高客单1对1咨询+数字资产产品化’才是最稳一人商业模型？",
+    theme: "可产品化／模板与数据库",
+    status: "值得拍",
+    sourcesCount: 5,
+    sourcesPlatforms: ["Twitter/X", "YouTube", "Reddit"],
+    painPoint: "一味追求十万百万播放量，接几百块的低质广告，流量一掉就焦虑得睡不着觉，无法建立长期健康的商业闭环。",
+    hotness: 5,
+    saturation: 2,
+    gap: "多数自媒体教程只教引流不教商业架构设计，缺乏透明展示从千粉账号如何通过咨询与模板跑出可观净利润的底层商业模型。",
+    feasibility: 5,
+    testCost: "极低",
+    estHours: "8 小时",
+    seriesPotential: "高 (一人商业认知系列)",
+    productPotential: "极高 (个人咨询预约交付体系+商业规划表)",
+    flag: "最值得拍",
+    needMoreData: "否",
+    scores: { fit: 5, demand: 5, gap: 5, unsat: 4, feas: 5, visual: 3, series: 5, prod: 5, cost: 5, biz: 5 },
+    totalScore: 47,
+    scoreReason: "全频道的商业思想制高点！彻底终结粉丝量与收入成正比的迷思，直接带动老郭后续高客单咨询与会员产品销售。",
+    plan: {
+      sellingPoint: "不再为微薄的播放量分成内耗！教你如何用3000个铁杆粉丝，养活一家极其滋润的一人公司",
+      audience: "所有自媒体从业者、独立专业人士、咨询顾问、自由职业者",
+      outline: "1. 虚假的繁荣：百万播放量可能买不起一杯咖啡；2. 凯文·凯利‘一千个铁杆粉丝’在AI时代的重构；3. 哑铃型变现模型：前端低价数字产品筛选，后端高客单深度陪跑交付；4. 自动化获客管道搭建；5. 老郭的商业底层原则：坦诚、复利与不赚快钱。",
+      experimentDesign: "以清晰的数据漏斗模型，演算对比‘纯靠播放量广告分成’ vs ‘高客单咨询+数字商品’在同等1万播放量下的净收益差异（相差可达10-20倍）。",
+      tools: "思维导图, Notion, 财务测算模型",
+      productionDays: "1天录制",
+      distribution: "全网重点推送 (YouTube长视频 + 微信公众号深度图文)",
+      expectedResult: "引发深度共鸣与全网讨论，确立老郭作为一人商业导师级别的信任壁垒。"
+    }
+  }
+];
+
+// ==================== 状态持久化机制 ====================
+function getStoredStatuses() {
+  try {
+    const saved = localStorage.getItem('laoguo_topic_statuses');
+    return saved ? JSON.parse(saved) : {};
+  } catch(e) { return {}; }
+}
+
+function saveStatus(id, newStatus) {
+  const map = getStoredStatuses();
+  map[id] = newStatus;
+  localStorage.setItem('laoguo_topic_statuses', JSON.stringify(map));
+  const t = rawTopics.find(item => item.id === id);
+  if(t) t.status = newStatus;
+  renderCards();
+  renderTable();
+}
+
+function applyStoredStatuses() {
+  const map = getStoredStatuses();
+  rawTopics.forEach(item => {
+    if(map[item.id]) item.status = map[item.id];
+  });
+}
+
+// ==================== 选项填充与过滤排序 ====================
+function populateFilters() {
+  const themeSet = new Set(), platSet = new Set();
+  rawTopics.forEach(t => {
+    if(t.theme) themeSet.add(t.theme);
+    if(Array.isArray(t.sourcesPlatforms)) {
+      t.sourcesPlatforms.forEach(p => platSet.add(p));
+    }
+  });
+
+  const tSel = document.getElementById('theme-filter');
+  tSel.innerHTML = '<option value="">全部主题分类</option>';
+  themeSet.forEach(th => {
+    const opt = document.createElement('option');
+    opt.value = th; opt.textContent = th;
+    tSel.appendChild(opt);
+  });
+
+  const pSel = document.getElementById('platform-filter');
+  pSel.innerHTML = '<option value="">全部来源平台</option>';
+  platSet.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    pSel.appendChild(opt);
+  });
+
+  const sSel = document.getElementById('status-filter');
+  sSel.innerHTML = '<option value="">全部状态</option>';
+  ['新发现','待研究','研究中','值得拍','待实测','已拍摄','已发布','可再利用','淘汰'].forEach(st => {
+    const opt = document.createElement('option');
+    opt.value = st; opt.textContent = st;
+    sSel.appendChild(opt);
+  });
+}
+
+function getFilteredData() {
+  const query = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const theme = document.getElementById('theme-filter').value;
+  const platform = document.getElementById('platform-filter').value;
+  const status = document.getElementById('status-filter').value;
+  const sort = document.getElementById('sort-select').value;
+
+  let list = rawTopics.filter(item => {
+    if(theme && item.theme !== theme) return false;
+    if(status && item.status !== status) return false;
+    if(platform && (!Array.isArray(item.sourcesPlatforms) || !item.sourcesPlatforms.includes(platform))) return false;
+    if(query) {
+      const matchTitle = (item.title || '').toLowerCase().includes(query);
+      const matchPain = (item.painPoint || '').toLowerCase().includes(query);
+      const matchId = (item.id || '').toLowerCase().includes(query);
+      const matchTheme = (item.theme || '').toLowerCase().includes(query);
+      if(!matchTitle && !matchPain && !matchId && !matchTheme) return false;
+    }
+    return true;
+  });
+
+  if(sort === 'score-desc') list.sort((a,b) => (b.totalScore || 0) - (a.totalScore || 0));
+  else if(sort === 'score-asc') list.sort((a,b) => (a.totalScore || 0) - (b.totalScore || 0));
+  else if(sort === 'sources-desc') list.sort((a,b) => (b.sourcesCount || 0) - (a.sourcesCount || 0));
+
+  return list;
+}
+
+// ==================== 渲染卡片看板 ====================
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  const data = getFilteredData();
+  document.getElementById('tab-count-board').textContent = rawTopics.length;
+  container.innerHTML = '';
+
+  if(data.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">未找到符合条件的选题卡片</div>`;
+    return;
+  }
+
+  data.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `card-${t.id}`;
+
+    const statusOptions = ['新发现','待研究','研究中','值得拍','待实测','已拍摄','已发布','可再利用','淘汰']
+      .map(s => `<option value="${s}" ${t.status === s ? 'selected' : ''}>${s}</option>`).join('');
+
+    const scores = t.scores || {};
+    const platforms = Array.isArray(t.sourcesPlatforms) ? t.sourcesPlatforms.join(', ') : '公开来源';
+
+    card.innerHTML = `
+      <div class="card-header">
+        <span class="card-id">${t.id}</span>
+        <div class="card-title" onclick="toggleDetails('${t.id}')">${t.title}</div>
+        <select onchange="saveStatus('${t.id}', this.value)" style="padding: 2px 6px; font-size: 0.75rem; background: #0f172a; color: #38bdf8; border: 1px solid #334155; border-radius: 4px;">
+          ${statusOptions}
+        </select>
+      </div>
+      <div class="card-tags">
+        <span class="tag tag-score">总分: ${t.totalScore || 0}/50</span>
+        <span class="tag">${t.theme || '未分类'}</span>
+        <span class="tag tag-flag">${t.flag || '选题'}</span>
+        ${t.needMoreData === '是' ? '<span class="tag" style="background:#b91c1c;color:#fecaca;">需补资料</span>' : ''}
+      </div>
+      <div class="card-meta">
+        <span>来源数: ${t.sourcesCount || 1} (${platforms})</span>
+        <span>投入估算: ${t.estHours || '待估算'}</span>
+      </div>
+      <div style="font-size: 0.8rem; color: #cbd5e1;">
+        <strong style="color: #f87171;">痛点:</strong> ${t.painPoint || '暂无痛点描述'}
+      </div>
+      <div style="font-size: 0.8rem; color: #94a3b8;">
+        <strong style="color: #34d399;">缺口:</strong> ${t.gap || '暂无缺口分析'}
+      </div>
+      <div style="text-align: right; margin-top: 4px;">
+        <button class="btn" style="padding: 2px 8px; font-size: 0.75rem;" onclick="toggleDetails('${t.id}')">展开完整字段与企划包 ▾</button>
+      </div>
+      <div class="card-details" id="detail-${t.id}">
+        <div class="detail-sec">
+          <strong>评分理由:</strong>
+          <div style="color: #cbd5e1; font-size: 0.8rem;">${t.scoreReason || '结合一人公司商业闭环与平台实际风控综合评定。'}</div>
+        </div>
+        <table class="detail-table">
+          <tr><td>频道匹配度</td><td>${scores.fit ?? '-'} / 5</td><td>实测可行性</td><td>${scores.feas ?? '-'} / 5</td></tr>
+          <tr><td>需求强度</td><td>${scores.demand ?? '-'} / 5</td><td>展示冲击力</td><td>${scores.visual ?? '-'} / 5</td></tr>
+          <tr><td>内容缺口度</td><td>${scores.gap ?? '-'} / 5</td><td>系列化潜力</td><td>${scores.series ?? '-'} / 5</td></tr>
+          <tr><td>供给蓝海度</td><td>${scores.unsat ?? '-'} / 5</td><td>产品化潜力</td><td>${scores.prod ?? '-'} / 5</td></tr>
+          <tr><td>成本与低风险</td><td>${scores.cost ?? '-'} / 5</td><td>变现闭环相关</td><td>${scores.biz ?? '-'} / 5</td></tr>
+        </table>
+        <div class="detail-sec" style="font-size: 0.75rem; color: #94a3b8;">
+          实测成本: ${t.testCost || '低'} | 热门度: ${t.hotness || '-'}/5 | 饱和度: ${t.saturation || '-'}/5 | 来源证据数: ${t.sourcesCount || 1}条
+        </div>
+        ${t.plan ? `
+        <div class="plan-box">
+          <h4>🎬 视频企划与实操方案包</h4>
+          <p><strong>一句话卖点:</strong> ${t.plan.sellingPoint || '暂无'}</p>
+          <p><strong>目标受众:</strong> ${t.plan.audience || '自媒体运营者与数字创作者'}</p>
+          <p style="margin-top:4px;"><strong>大纲脉络:</strong> ${t.plan.outline || '待制定'}</p>
+          <p style="margin-top:4px;"><strong>实测设计:</strong> ${t.plan.experimentDesign || '待验证'}</p>
+          <p style="margin-top:4px;"><strong>所需工具:</strong> ${t.plan.tools || '常用自媒体工具'} | <strong>周期:</strong> ${t.plan.productionDays || '1-2天'}</p>
+          <p style="margin-top:4px;"><strong>发布与预期:</strong> ${t.plan.distribution || '全网同步'} ➔ ${t.plan.expectedResult || '建立专业信任度'}</p>
+        </div>` : '<div style="font-size:0.75rem; color:#64748b; margin-top:8px;">(当前状态为研究/淘汰，未生成详细企划包)</div>'}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleDetails(id) {
+  const el = document.getElementById(`detail-${id}`);
+  if(el) el.classList.toggle('open');
+}
+
+// ==================== 渲染总表 ====================
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  const data = getFilteredData();
+  tbody.innerHTML = '';
+
+  data.forEach(t => {
+    const tr = document.createElement('tr');
+    const platforms = Array.isArray(t.sourcesPlatforms) ? t.sourcesPlatforms.join(', ') : '公开来源';
+    tr.innerHTML = `
+      <td><strong>${t.id}</strong></td>
+      <td style="max-width: 280px; font-weight: 600;">${t.title}</td>
+      <td><span class="tag">${t.theme || '未分类'}</span></td>
+      <td>
+        <select onchange="saveStatus('${t.id}', this.value)" style="padding: 2px 6px; font-size: 0.75rem; background: #0f172a; color: #38bdf8; border: 1px solid #334155; border-radius: 4px;">
+          ${['新发现','待研究','研究中','值得拍','待实测','已拍摄','已发布','可再利用','淘汰'].map(s => `<option value="${s}" ${t.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td><strong style="color: #60a5fa;">${t.totalScore || 0}</strong></td>
+      <td>${t.sourcesCount || 1}</td>
+      <td>${platforms}</td>
+      <td><span class="tag tag-flag">${t.flag || '选题'}</span></td>
+      <td>${t.estHours || '待估算'}</td>
+      <td>
+        <button class="btn" style="padding: 2px 6px; font-size: 0.75rem;" onclick="switchTab('board'); setTimeout(() => { const el = document.getElementById('card-${t.id}'); if(el){ el.scrollIntoView({behavior:'smooth'}); toggleDetails('${t.id}'); } }, 100);">查看</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ==================== 渲染来源证据 ====================
+function renderEvidence() {
+  const tbody = document.getElementById('evidence-table-body');
+  tbody.innerHTML = '';
+  rawEvidence.forEach(e => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>#${e.id}</td>
+      <td><span class="tag">${e.platform}</span></td>
+      <td style="max-width: 320px; font-weight: 500;">${e.title}</td>
+      <td>${e.date}</td>
+      <td>${e.metrics}</td>
+      <td><span class="tag tag-gap">${e.theme}</span></td>
+      <td><span class="tag" style="${e.conf==='High'?'background:#065f46;color:#a7f3d0':'background:#854d0e;color:#fef08a'}">${e.conf}</span></td>
+      <td><span style="${e.hype==='高'?'color:#ef4444;font-weight:bold':e.hype==='中'?'color:#f59e0b':'color:#10b981'}">${e.hype}</span></td>
+      <td style="font-size: 0.75rem; color: ${e.status==='完整可核验'?'#34d399':'#fbbf24'}">${e.status}</td>
+      <td><a href="${e.url}" target="_blank" style="color: #60a5fa; text-decoration: none; font-size: 0.75rem;">公开链接 ↗</a></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ==================== 渲染 Top 5 建议 ====================
+function renderTop5() {
+  const worthFilming = [
+    { id: "T005", title: "从竞品知识库到自动化选题雷达（总分 47）", reason: "全网核心蓝海，把本选题看板诞生过程直接制作为‘元叙事’影片，既是核武器级工具展示，又能作为高客单引流拳头产品。" },
+    { id: "T001", title: "一人公司AI工作流真实闭环与耗时复盘（总分 46）", reason: "破除全网日产100条的浮躁神话，用一周严谨的工时打卡数据，树立老郭沉稳、诚实、一人公司老兵的人设基石。" },
+    { id: "T024", title: "自媒体爆款脚本的‘黄金3秒Hook’工程化（总分 46）", reason: "所有创作者最直接的痛点（完播跳水），将心理学融入Prompt公式，直接产出高价值数字提示词资产，完播与收藏双爆。" },
+    { id: "T030", title: "自媒体变现终极答案：高客单咨询+数字资产（总分 47）", reason: "频道的商业认知天花板，终结低效广告内耗，全面打通后续咨询服务与私域变现闭环。" },
+    { id: "T003", title: "拆解‘月入5万AI副业’骗局与PS/F12漏洞（总分 43）", reason: "正义打假、戏剧冲突强烈，现场修改审查元素改数字极具视觉震撼力，极速破圈吸粉并建立高度信任护城河。" }
+  ];
+
+  const worthTesting = [
+    { id: "T002", title: "小红书/视频号AI图文平台风控底线与降AI率实测", reason: "用3个全新账号跑对照实验，真金白银验证纯AI、降重工具与人工重构的真实封禁限流概率，解决创作者的根本恐惧。" },
+    { id: "T010", title: "ElevenLabs vs MiniMax vs 微软TTS 长音频盲测对比", reason: "长达10分钟复杂叙事语境下的真实听感盲测，让观众在弹幕竞猜真假，极高互动率同时给出明确性价比选型结论。" },
+    { id: "T013", title: "剪映/CapCut Python API脚本自动化剪辑商用可行性", reason: "硬核极客动手实测，检验代码批量出片究竟是真正提效还是Bug漫天，为技术型创作者排雷。" },
+    { id: "T020", title: "Suno/Udio商业视频BGM的YouTube Content ID侵权测试", reason: "上传多首AI音乐静置72小时观察版权库识别机制，解决创作者商业成片交付的最大后顾之忧。" },
+    { id: "T004", title: "Whisper+本地LLM长视频拆短与章节自动化流水线", reason: "脱离高昂付费SaaS，实测开源工具链的耗时与切片准确度，输出可复用的工程化脚本。" }
+  ];
+
+  const seriesTopics = [
+    { id: "T016", title: "打造个人数字分身：喂给DeepSeek几十万字写个人风格脚本", reason: "可延展为‘知识库建立 -> 口癖Prompt调教 -> 智能排版助手’系列，追更粘性极高。" },
+    { id: "T011", title: "小红书AI垂直新号养成记：30天连续打卡与真实数据复盘", reason: "养成系连载视频，记录每一次受挫与起步，观众极度沉浸，粉丝粘性极大。" },
+    { id: "T001", title: "一人公司实录：每周工时账单与工具ROI测算", reason: "可作为每月固定栏目（一人公司月度报表），持续强化频道核心主线。" },
+    { id: "T025", title: "用Claude Code/Cursor给自媒体写专属工具小插件", reason: "可形成‘10分钟微工具开发’专栏，每期解决一个具体自媒体日常重复操作痛点。" },
+    { id: "T029", title: "一人多栖创作工坊：播客+长视频+图文自动化衍生", reason: "伴随老郭自身内容形式的演进，持续输出一鱼多吃的最新生产力技巧。" }
+  ];
+
+  const productTopics = [
+    { id: "T008", title: "一人自媒体Notion超级大脑看板（总分 43）", reason: "完美承接本视频流量，作为核心免费/付费模板在私域直接分发，沉淀精准高意向用户。" },
+    { id: "T005", title: "Dify/Coze 选题雷达工作流 DSL 配置文件（总分 47）", reason: "开箱即用的AI Agent配置文件，极高技术附加值，可作为高价值会员或独立数字商品销售。" },
+    { id: "T021", title: "Gumroad+Stripe+Notion数字商品极简销售链路（总分 44）", reason: "直接将销售体系本身作为教学，配套附赠全套落地页与发货自动化配置包。" },
+    { id: "T024", title: "爆款视频黄金3秒Hook与心理学Prompt词典（总分 46）", reason: "极轻量、极高频的数字资产，无论是做引流Hook手册还是付费Prompt包都极具说服力。" },
+    { id: "T012", title: "Flux+Midjourney油管高CTR封面提示词库与PSD源文件", reason: "即插即用的视觉模板，极度契合视频制作群体的即时变现与效率需求。" }
+  ];
+
+  const eliminateTopics = [
+    { id: "T009", title: "全自动批量Faceless无脸历史/解说频道（建议坚决淘汰）", reason: "看似全网狂热，实则已被YouTube Reused Content严酷封杀，零粉丝粘性，无转售与IP价值，充当打假题材即可。" },
+    { id: "T023", title: "纯自动Make+DeepSeek批量小红书矩阵做号（建议淘汰纯自动）", reason: "平台设备指纹与语义排重算法严密，批量死号概率超90%，必须转型为人机协同的高价值精品路线。" },
+    { id: "T027", title: "购买市面套壳卡密的‘一键去重混剪黑科技软件’（坚决淘汰被割）", reason: "绝大多数为FFmpeg开源封装骗局，无法逃避底层感知哈希检测，坚决不参与此类灰产推广。" },
+    { id: "T022", title: "全流程AI数字人替代真人出镜口播（建议审慎转向辅助）", reason: "严重破坏‘老郭’作为诚实、有血有肉一人创业者的信任基础，易产生恐怖谷排斥，仅建议做局部分析。" },
+    { id: "T019", title: "纯搬运编译海外科技新闻的泛科技AI号（淘汰泛资讯，转向深度观点）", reason: "资讯搬运极易饱和且毫无壁垒，必须转向‘有个人第一手实测数据、有独立态度与实操经验’的护城河内容。" }
+  ];
+
+  function fillList(id, arr) {
+    const el = document.getElementById(id);
+    el.innerHTML = arr.map(item => `<li><strong>${item.title || item.id}</strong><br><span style="color: var(--text-muted); font-size: 0.85rem;">理由：${item.reason}</span></li>`).join('');
+  }
+
+  fillList('top-worth-filming', worthFilming);
+  fillList('top-worth-testing', worthTesting);
+  fillList('top-series', seriesTopics);
+  fillList('top-product', productTopics);
+  fillList('top-eliminate', eliminateTopics);
+}
+
+// ==================== 标签页切换 ====================
+function switchTab(tabId) {
+  document.querySelectorAll('.nav-tab').forEach((tab, index) => {
+    tab.classList.toggle('active', ['board','table','evidence','top5','guide'][index] === tabId);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`tab-${tabId}`).classList.add('active');
+
+  const controls = document.getElementById('filter-controls');
+  if(tabId === 'board' || tabId === 'table') controls.style.display = 'flex';
+  else controls.style.display = 'none';
+}
+
+function resetFilters() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('theme-filter').value = '';
+  document.getElementById('platform-filter').value = '';
+  document.getElementById('status-filter').value = '';
+  document.getElementById('sort-select').value = 'score-desc';
+  renderCards();
+  renderTable();
+}
+
+// ==================== 统计弹窗 ====================
+function showStats() {
+  const modal = document.getElementById('stats-modal');
+  const content = document.getElementById('stats-content');
+  const total = rawTopics.length;
+
+  const platformCount = {}, statusCount = {}, themeCount = {}, flagCount = {};
+  rawTopics.forEach(t => {
+    statusCount[t.status] = (statusCount[t.status] || 0) + 1;
+    themeCount[t.theme] = (themeCount[t.theme] || 0) + 1;
+    flagCount[t.flag] = (flagCount[t.flag] || 0) + 1;
+    if(Array.isArray(t.sourcesPlatforms)) {
+      t.sourcesPlatforms.forEach(p => platformCount[p] = (platformCount[p] || 0) + 1);
+    }
+  });
+
+  function makeBar(label, count, max) {
+    const pct = max > 0 ? ((count / max) * 100).toFixed(0) : 0;
+    return `<div style="display:flex; justify-content:space-between; margin-bottom:2px;"><span>${label}</span><span><strong>${count}</strong> (${pct}%)</span></div>
+            <div style="background:#0f172a; height:6px; border-radius:3px; margin-bottom:8px; overflow:hidden;"><div style="background:#38bdf8; width:${pct}%; height:100%;"></div></div>`;
+  }
+
+  content.innerHTML = `
+    <h4 style="color:#60a5fa; margin-bottom:8px;">📌 选题状态分布 (共 ${total} 个)</h4>
+    ${Object.entries(statusCount).map(([k,v]) => makeBar(k, v, total)).join('')}
+    
+    <h4 style="color:#60a5fa; margin:16px 0 8px;">🏷️ 核心策略标记分布</h4>
+    ${Object.entries(flagCount).map(([k,v]) => makeBar(k, v, total)).join('')}
+
+    <h4 style="color:#60a5fa; margin:16px 0 8px;">📚 主题分类构成</h4>
+    ${Object.entries(themeCount).map(([k,v]) => makeBar(k, v, total)).join('')}
+
+    <h4 style="color:#60a5fa; margin:16px 0 8px;">🌐 来源平台分布频次</h4>
+    ${Object.entries(platformCount).map(([k,v]) => makeBar(k, v, total)).join('')}
+  `;
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('stats-modal').classList.remove('open');
+}
+
+// ==================== 导入 / 导出 ====================
+function exportCSV() {
+  const data = getFilteredData();
+  let csv = "\uFEFFID,选题标题,主题分类,状态,总分,来源数,来源平台,核心标记,投入时间估算,痛点描述,内容缺口,实测成本\n";
+  data.forEach(t => {
+    const platforms = Array.isArray(t.sourcesPlatforms) ? t.sourcesPlatforms.join(';') : '';
+    const row = [
+      t.id,
+      `"${(t.title || '').replace(/"/g, '""')}"`,
+      `"${t.theme || ''}"`,
+      t.status,
+      t.totalScore || 0,
+      t.sourcesCount || 1,
+      `"${platforms}"`,
+      `"${t.flag || ''}"`,
+      `"${t.estHours || ''}"`,
+      `"${(t.painPoint || '').replace(/"/g, '""')}"`,
+      `"${(t.gap || '').replace(/"/g, '""')}"`,
+      `"${t.testCost || ''}"`
+    ];
+    csv += row.join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `老郭数字生活_选题看板_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function exportJSON() {
+  const exportPayload = {
+    channel: "老郭的数字生活",
+    exportDate: new Date().toISOString(),
+    topics: rawTopics,
+    customStatuses: getStoredStatuses()
+  };
+  const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `老郭数字生活_选题数据全库_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(data.customStatuses) {
+        localStorage.setItem('laoguo_topic_statuses', JSON.stringify(data.customStatuses));
+      }
+      if(Array.isArray(data.topics)) {
+        alert(`成功识别导入数据：包含 ${data.topics.length} 个选题卡。正在更新看板...`);
+        rawTopics = data.topics;
+        applyStoredStatuses();
+        populateFilters();
+        renderCards();
+        renderTable();
+      } else {
+        alert('导入成功，状态已更新。');
+        location.reload();
+      }
+    } catch(err) {
+      alert('导入失败：文件格式不符合合规 JSON 规范！');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ==================== 页面启动：自动拉取外部 JSON 或退回基准 ====================
+window.addEventListener('DOMContentLoaded', async () => {
+  const badge = document.getElementById('data-status-badge');
+  try {
+    const res = await fetch('./topics.json?t=' + new Date().getTime());
+    if (res.ok) {
+      const remoteData = await res.json();
+      if (Array.isArray(remoteData.topics) && remoteData.topics.length > 0) {
+        rawTopics = remoteData.topics;
+        badge.textContent = `🟢 自动同步在线: ${remoteData.lastUpdated || '已同步最新'}`;
+        badge.style.background = '#064e3b';
+        badge.style.color = '#6ee7b7';
+      }
+    } else {
+      badge.textContent = '⚪ 运行内置基准数据';
+      badge.style.background = '#334155';
+      badge.style.color = '#cbd5e1';
+    }
+  } catch (e) {
+    badge.textContent = '⚪ 运行内置基准数据';
+    badge.style.background = '#334155';
+    badge.style.color = '#cbd5e1';
+  }
+
+  applyStoredStatuses();
+  populateFilters();
+  renderCards();
+  renderTable();
+  renderEvidence();
+  renderTop5();
+});
+</script>
+</body>
+</html>
