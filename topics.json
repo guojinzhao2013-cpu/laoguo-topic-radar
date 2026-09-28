@@ -1,19 +1,8 @@
 {
   "channel": "老郭的数字生活",
-  "lastUpdated": "2026-09-21T06:20:15Z",
+  "lastUpdated": "2026-09-28T06:53:09Z",
   "source": "index.html 内置基准数据 + 可选公开 RSS",
-  "rssSampleTitles": [
-    "Far-left party wins Berlin election, pledging to nationalise housing",
-    "AI chatbots give wrong answers to financial queries 'most of the time'",
-    "Winning the Visa Lottery",
-    "Deterministic Core, Non-Deterministic Shell",
-    "Why back propagation goes backward",
-    "Amiga Unix, Again",
-    "What happened to the Snowden archive",
-    "AX – Google’s Open Agentic Orchestrator",
-    "Ogre Battle 64 Recompiled Project at 99.05%",
-    "Why MCP Was Always a Bad Idea?"
-  ],
+  "rssSampleTitles": [],
   "topics": [
     {
       "id": "T001",
