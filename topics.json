@@ -1,8 +1,19 @@
 {
   "channel": "老郭的数字生活",
-  "lastUpdated": "2026-09-28T06:53:09Z",
+  "lastUpdated": "2026-10-05T07:02:05Z",
   "source": "index.html 内置基准数据 + 可选公开 RSS",
-  "rssSampleTitles": [],
+  "rssSampleTitles": [
+    "Anthropic reported diary entry to police, woman faces felony charge",
+    "Replacement of petroleum based products with plant-based materials (2025)",
+    "Nearly 200 people under observation after Irkutsk lab worker dies from plague",
+    "Powerless F1 drivers frustrated by Bahrain F1 software glitch",
+    "A 40ms Go garbage collector pause caused by swap",
+    "Self-hosted HTTP tunnels with SSH and Nginx",
+    "In the wake of closure, a digital archive of animated materials appears online",
+    "Homa: The end of TCP for AI clusters [video]",
+    "Turn off Apple Intelligence on macOS 27 and get its disk space back",
+    "Improper redaction reveals Google Data Center water and electricity usage"
+  ],
   "topics": [
     {
       "id": "T001",
