@@ -1,18 +1,18 @@
 {
   "channel": "老郭的数字生活",
-  "lastUpdated": "2026-10-05T07:02:05Z",
+  "lastUpdated": "2026-10-12T07:20:48Z",
   "source": "index.html 内置基准数据 + 可选公开 RSS",
   "rssSampleTitles": [
-    "Anthropic reported diary entry to police, woman faces felony charge",
-    "Replacement of petroleum based products with plant-based materials (2025)",
-    "Nearly 200 people under observation after Irkutsk lab worker dies from plague",
-    "Powerless F1 drivers frustrated by Bahrain F1 software glitch",
-    "A 40ms Go garbage collector pause caused by swap",
-    "Self-hosted HTTP tunnels with SSH and Nginx",
-    "In the wake of closure, a digital archive of animated materials appears online",
-    "Homa: The end of TCP for AI clusters [video]",
-    "Turn off Apple Intelligence on macOS 27 and get its disk space back",
-    "Improper redaction reveals Google Data Center water and electricity usage"
+    "AI-Built Torrent Site Looks Inside Downloads to Catch Fakes and Malware",
+    "Attack of the Vibe Coded Photoshop Clones",
+    "Type-safe HTML templating in Zig",
+    "Will Linux phones become a viable alternative to the Android/iOS duopoly?",
+    "Crest – an Arc-inspired open-source browser for Mac",
+    "Doory – Open-Source Canva",
+    "Local Indexing to reduce tool calling and token usage",
+    "Whatever became of holography? (2011)",
+    "Illustration Beyond Proof",
+    "ClickHouse C – Talk to ClickHouse using its native binary protocol"
   ],
   "topics": [
     {
