@@ -1,18 +1,18 @@
 {
   "channel": "老郭的数字生活",
-  "lastUpdated": "2026-10-19T06:12:27Z",
+  "lastUpdated": "2026-10-26T06:12:39Z",
   "source": "index.html 内置基准数据 + 可选公开 RSS",
   "rssSampleTitles": [
-    "Agent-Skills.market",
-    "DeepSeek V4.1 Flash 1017 (Max)",
-    "Verisign .com Domain Name Registry Consumer Class Action",
-    "Superlite: A Faster Alternatie to Superpowers",
-    "Footage of the Flock search that a judge ruled was uncosntitutional",
-    "Sanity's Edge – A voice BBS from 1994",
-    "William Gibson and the trademarking of cyberspace",
-    "How Quickly Can the DoD Rebuild and Recast the Munitions Industrial Base?",
-    "Show HN: WhatsApp MCP running free on Cloudflare",
-    "If you don't run your own LLM proxy, how do you know whats going on?"
+    "Show HN: Proc-CLI – An agent-friendly CLI tool for process and port management",
+    "Cognitive Mercantilism: AI panic resembles fears of early capitalism",
+    "Behind the scenes at the NeXT Computer office",
+    "PaperPilot – Zero-Cloud, Pure-Rust PDF Engine with WASM and MCP",
+    "Show HN: TitleArt – Make text like it's 1997",
+    "Microsoft Decision-1: 9B Qwen Model Launch Explained",
+    "IBM CEO says open weight models are now good and cheap on-prem",
+    "iPhone Duo Teardown",
+    "Removing Next.js Got My Blog to 100 on Every Lighthouse Category",
+    "Lula wins election after final votes tallied"
   ],
   "topics": [
     {
