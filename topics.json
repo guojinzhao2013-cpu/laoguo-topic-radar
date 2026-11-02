@@ -1,18 +1,18 @@
 {
   "channel": "老郭的数字生活",
-  "lastUpdated": "2026-10-26T06:12:39Z",
+  "lastUpdated": "2026-11-02T07:40:20Z",
   "source": "index.html 内置基准数据 + 可选公开 RSS",
   "rssSampleTitles": [
-    "Show HN: Proc-CLI – An agent-friendly CLI tool for process and port management",
-    "Cognitive Mercantilism: AI panic resembles fears of early capitalism",
-    "Behind the scenes at the NeXT Computer office",
-    "PaperPilot – Zero-Cloud, Pure-Rust PDF Engine with WASM and MCP",
-    "Show HN: TitleArt – Make text like it's 1997",
-    "Microsoft Decision-1: 9B Qwen Model Launch Explained",
-    "IBM CEO says open weight models are now good and cheap on-prem",
-    "iPhone Duo Teardown",
-    "Removing Next.js Got My Blog to 100 on Every Lighthouse Category",
-    "Lula wins election after final votes tallied"
+    "Show HN: Wikihack – HackerTube, but for Wikipedia articles mentioned on HN",
+    "F/OSS Comics #13: BSD Unix, Part 3 – The Beginning of BSD Unix",
+    "AI fan wikis riddled with errors are muddying the waters of games culture",
+    "Bones may release proteins that slow aging and extend life span",
+    "Trigger.dev customer environment variables exposed",
+    "OccupySaaS",
+    "Ask HN: Which TV do you recommend for privacy?",
+    "Mathematics has changed. Let's act like it",
+    "I Am the Reason OpenAI Is Killing Unlimited Chats",
+    "Seoul Viosys begins production of rare-earth-free white light emitter"
   ],
   "topics": [
     {
